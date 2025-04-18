@@ -81,7 +81,7 @@ public class UserVoiceController {
             return ResponseEntity.badRequest().body("不支持的语音平台。");
         }
         String voiceSrcUrl = req.getVoiceSrcUrl();
-        String modelNamePrefix = "OT" + userId;
+        String modelNamePrefix = "opentalkx";
         VoiceReprintResult result = voiceReprintService.reprint(new VoiceReprintRequest().setVoiceSrcUrl(voiceSrcUrl).setModelNamePrefix(modelNamePrefix));
         if (null == result) {
             return ResponseEntity.badRequest().body("创建失败，请联系管理员。");
