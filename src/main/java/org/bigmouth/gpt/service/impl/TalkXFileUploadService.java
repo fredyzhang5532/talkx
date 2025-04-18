@@ -1,41 +1,46 @@
 package org.bigmouth.gpt.service.impl;
 
-import lombok.extern.slf4j.Slf4j;
 import org.bigmouth.gpt.service.FileUploadType;
 import org.bigmouth.gpt.service.FileUploadService;
+import org.bigmouth.gpt.xiaozhi.forest.TalkXApi;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
- * @author tangxiao
- * @date 2023/7/20
- * @since 1.0
+ * @author Allen Hu
+ * @date 2025/4/18
  */
 @Service
-@Slf4j
-public class FileUploadServiceImpl implements FileUploadService {
+public class TalkXFileUploadService implements FileUploadService {
+
+    private final TalkXApi talkXApi;
+
+    public TalkXFileUploadService(TalkXApi talkXApi) {
+        this.talkXApi = talkXApi;
+    }
+
     @Override
     public FileUploadType of() {
-        return FileUploadType.ALIYUN_OSS;
+        return FileUploadType.TALKX;
     }
 
     @Override
     public String uploadImg(MultipartFile file) {
-        throw new UnsupportedOperationException();
+        return talkXApi.uploadImage(file);
     }
 
     @Override
     public String uploadImg(MultipartFile file, String parentDir) {
-        throw new UnsupportedOperationException();
+        return talkXApi.uploadImage(file);
     }
 
     @Override
     public String uploadFile(MultipartFile file) {
-        throw new UnsupportedOperationException();
+        return talkXApi.uploadFile(file);
     }
 
     @Override
     public String uploadFile(MultipartFile file, String parentDir) {
-        throw new UnsupportedOperationException();
+        return talkXApi.uploadFile(file);
     }
 }

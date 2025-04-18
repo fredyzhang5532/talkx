@@ -2,6 +2,7 @@ package org.bigmouth.gpt.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.bigmouth.gpt.service.FileUploadService;
+import org.bigmouth.gpt.service.FileUploadServiceFactory;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -22,8 +23,8 @@ import org.springframework.web.multipart.MultipartFile;
 public class FileUploadController {
     private final FileUploadService fileUploadService;
 
-    public FileUploadController(FileUploadService fileUploadService) {
-        this.fileUploadService = fileUploadService;
+    public FileUploadController(FileUploadServiceFactory fileUploadServiceFactory) {
+        this.fileUploadService = fileUploadServiceFactory.get();
     }
 
     @PostMapping("/img")
