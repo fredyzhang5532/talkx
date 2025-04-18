@@ -25,12 +25,12 @@ public interface TalkXApi {
     @Post("/xiaozhi/ota/mqtt_forward_connect")
     ForwardConnectResponse forwardConnect(@JSONBody ForwardConnectRequest request);
 
+    @Post("/xiaozhi/voice/reprint")
+    VoiceReprintResult reprint(@JSONBody VoiceReprintRequest request);
+
     @Post("/upload/img")
     String uploadImage(@DataFile(value = "file") MultipartFile multipartFile);
 
     @Post("/upload/file")
     String uploadFile(@DataFile(value = "file") MultipartFile multipartFile);
-
-    @Post("/voice/reprint")
-    VoiceReprintResult reprint(@JSONBody VoiceReprintRequest request);
 }
