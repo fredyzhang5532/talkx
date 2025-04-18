@@ -6,6 +6,8 @@ import com.dtflys.forest.annotation.JSONBody;
 import com.dtflys.forest.annotation.Post;
 import org.bigmouth.gpt.xiaozhi.OtaResponse;
 import org.bigmouth.gpt.xiaozhi.entity.asr.TalkXAsrRequest;
+import org.bigmouth.gpt.xiaozhi.tts.VoiceReprintRequest;
+import org.bigmouth.gpt.xiaozhi.tts.VoiceReprintResult;
 import org.springframework.web.multipart.MultipartFile;
 
 @BaseRequest(baseURL = "${talkxCenterBaseUrl}")
@@ -28,4 +30,7 @@ public interface TalkXApi {
 
     @Post("/upload/file")
     String uploadFile(@DataFile(value = "file") MultipartFile multipartFile);
+
+    @Post("/voice/reprint")
+    VoiceReprintResult reprint(@JSONBody VoiceReprintRequest request);
 }

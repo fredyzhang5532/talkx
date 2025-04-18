@@ -6,7 +6,10 @@ import org.bigmouth.gpt.xiaozhi.config.XiaozhiAlibabaConfig;
 import org.bigmouth.gpt.xiaozhi.config.XiaozhiByteDanceConfig;
 import org.bigmouth.gpt.xiaozhi.config.XiaozhiTalkXConfig;
 import org.bigmouth.gpt.xiaozhi.forest.TalkXApi;
+import org.bigmouth.gpt.xiaozhi.tts.ali.AlibabaDashscopeTtsService;
 import org.bigmouth.gpt.xiaozhi.tts.ali.CosyVoiceObjectPool;
+import org.bigmouth.gpt.xiaozhi.tts.talkx.TalkXTtsService;
+import org.bigmouth.gpt.xiaozhi.tts.volcengine.ByteDanceTtsService;
 import org.bigmouth.gpt.xiaozhi.tts.volcengine.SpeechWsClientObjectPool;
 import org.springframework.context.annotation.Configuration;
 

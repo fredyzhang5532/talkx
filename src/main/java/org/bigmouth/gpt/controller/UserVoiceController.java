@@ -73,8 +73,7 @@ public class UserVoiceController {
                 .eq(UserVoiceReprint::getUserId, userId)) >= 3) {
             return ResponseEntity.badRequest().body("一个用户最多只能复刻3个声音。");
         }
-        TtsPlatformType defaultType = TtsPlatformType.Alibaba;
-        VoiceReprintService voiceReprintService = voiceReprintServiceFactory.get(defaultType);
+        VoiceReprintService voiceReprintService = voiceReprintServiceFactory.get();
         if (null == voiceReprintService) {
             return ResponseEntity.badRequest().body("不支持的语音平台。");
         }
@@ -89,7 +88,7 @@ public class UserVoiceController {
         reprint.setUserId(userId);
         reprint.setVoiceName(req.getVoiceName());
         reprint.setVoiceSrcUrl(voiceSrcUrl);
-        reprint.setAudioPlatformType(defaultType.name());
+        reprint.setAudioPlatformType(result.getTtsPlatformType().name());
         reprint.setAudioModel(result.getAudioModel());
         reprint.setAudioRole(modelId);
         userVoiceReprintService.save(reprint);

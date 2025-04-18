@@ -1,20 +1,12 @@
-package org.bigmouth.gpt.xiaozhi.tts;
+package org.bigmouth.gpt.xiaozhi.tts.talkx;
 
-import com.bxm.warcar.utils.JsonHelper;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import okhttp3.*;
-import org.apache.commons.io.IOUtils;
-import org.bigmouth.gpt.xiaozhi.config.XiaozhiTalkXConfig;
 import org.bigmouth.gpt.xiaozhi.forest.TalkXApi;
 import org.bigmouth.gpt.xiaozhi.forest.TtsRequest;
-import org.springframework.web.util.UriComponentsBuilder;
+import org.bigmouth.gpt.xiaozhi.tts.TtsPlatformType;
+import org.bigmouth.gpt.xiaozhi.tts.TtsService;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.time.Duration;
-import java.util.Arrays;
-import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
 /**
