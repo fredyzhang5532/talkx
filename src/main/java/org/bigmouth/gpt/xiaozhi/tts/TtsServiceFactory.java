@@ -2,11 +2,15 @@ package org.bigmouth.gpt.xiaozhi.tts;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.bigmouth.gpt.xiaozhi.config.XiaozhiAlibabaConfig;
 import org.bigmouth.gpt.xiaozhi.config.XiaozhiByteDanceConfig;
 import org.bigmouth.gpt.xiaozhi.config.XiaozhiTalkXConfig;
 import org.bigmouth.gpt.xiaozhi.forest.TalkXApi;
+import org.bigmouth.gpt.xiaozhi.tts.ali.AlibabaDashscopeTtsService;
 import org.bigmouth.gpt.xiaozhi.tts.ali.CosyVoiceObjectPool;
+import org.bigmouth.gpt.xiaozhi.tts.talkx.TalkXTtsService;
+import org.bigmouth.gpt.xiaozhi.tts.volcengine.ByteDanceTtsService;
 import org.bigmouth.gpt.xiaozhi.tts.volcengine.SpeechWsClientObjectPool;
 import org.springframework.context.annotation.Configuration;
 
@@ -59,6 +63,11 @@ public class TtsServiceFactory {
             case TalkX:
                 TtsPlatformType defaultTtsPlatformType = xiaozhiTalkXConfig.getDefaultTtsPlatformType();
                 voiceModel = Optional.ofNullable(voiceModel).orElse(xiaozhiTalkXConfig.getDefaultVoiceModel());
+                // 在这个版本已经删除内置角色，为了兼容历史已经配置内置的角色。
+                if (StringUtils.equals("talkx_default_role", voiceRole)) {
+                    voiceRole = xiaozhiTalkXConfig.getDefaultVoiceRole();
+                    log.warn("TalkX inlay voice role is deprecated, please change to other voice role instead.");
+                }
                 voiceRole = Optional.ofNullable(voiceRole).orElse(xiaozhiTalkXConfig.getDefaultVoiceRole());
                 return createTalkX(sessionId, defaultTtsPlatformType, voiceModel, voiceRole);
             default:

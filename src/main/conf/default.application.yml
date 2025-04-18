@@ -90,6 +90,16 @@ xiaozhi:
     # - talkx：必须配置  forest.variables.talkxCenterBaseUrl
     # - sensevoice_fastapi：必须配置 forest.variables.sensevoiceFastApiUrl
     type: talkx
+
+  # 声音复刻相关配置
+  voice:
+    reprint:
+      # 可选类型：talkx、alibaba
+      # - talkx：必须配置 forest.variables.talkxCenterBaseUrl、forest.read-timeout
+      # - alibaba：必须配置 xiaozhi.alibaba 相关配置
+      type: talkx
+
+  # 说话活动监测配置
   silero:
     model-path: ../conf/silero_vad.onnx
     start-threshold: 0.6
@@ -114,6 +124,7 @@ xiaozhi:
     type: none
 forest:
   log-enabled: false
+  read-timeout: 30000
   variables:
     # 设置 Mem0 接口地址
 #    mem0baseUrl: http://172.27.1.26:8000

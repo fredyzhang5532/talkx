@@ -1,4 +1,4 @@
-package org.bigmouth.gpt.xiaozhi.tts;
+package org.bigmouth.gpt.xiaozhi.tts.ali;
 
 import com.alibaba.dashscope.audio.tts.SpeechSynthesisResult;
 import com.alibaba.dashscope.audio.ttsv2.SpeechSynthesisAudioFormat;
@@ -7,6 +7,8 @@ import com.alibaba.dashscope.audio.ttsv2.SpeechSynthesizer;
 import com.alibaba.dashscope.common.ResultCallback;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.bigmouth.gpt.xiaozhi.tts.TtsPlatformType;
+import org.bigmouth.gpt.xiaozhi.tts.TtsService;
 import org.bigmouth.gpt.xiaozhi.tts.ali.CosyVoiceObjectPool;
 
 import java.nio.ByteBuffer;

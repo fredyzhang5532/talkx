@@ -3,6 +3,7 @@ package org.bigmouth.gpt;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import lombok.Data;
+import org.bigmouth.gpt.service.FileUploadType;
 import org.bigmouth.gpt.entity.response.ModelResponse;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
@@ -99,7 +100,10 @@ public class ApplicationConfig {
      */
     private boolean enableRedisCache = false;
 
-
+    /**
+     * 指定文件上传实现的类型，默认：TalkX
+     */
+    private FileUploadType defaultFileUploadType = FileUploadType.TALKX;
 
     @Data
     public static class CustomModel {
