@@ -21,19 +21,19 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 @RequestMapping("/upload")
 public class FileUploadController {
-    private final FileUploadService fileUploadService;
+    private final FileUploadServiceFactory fileUploadServiceFactory;
 
     public FileUploadController(FileUploadServiceFactory fileUploadServiceFactory) {
-        this.fileUploadService = fileUploadServiceFactory.get();
+        this.fileUploadServiceFactory = fileUploadServiceFactory;
     }
 
     @PostMapping("/img")
     public String uploadImg(@RequestParam("file") MultipartFile file) {
-        return fileUploadService.uploadImg(file);
+        return fileUploadServiceFactory.get().uploadImg(file);
     }
 
     @PostMapping("/file")
     public String uploadFile(@RequestParam("file") MultipartFile file) {
-        return fileUploadService.uploadFile(file);
+        return fileUploadServiceFactory.get().uploadFile(file);
     }
 }
