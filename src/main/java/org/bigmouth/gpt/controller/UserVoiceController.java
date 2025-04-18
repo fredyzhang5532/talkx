@@ -9,6 +9,7 @@ import org.bigmouth.gpt.entity.UserVoiceReprint;
 import org.bigmouth.gpt.interceptor.ContextFactory;
 import org.bigmouth.gpt.service.IUserFriendMediaConfigService;
 import org.bigmouth.gpt.service.IUserVoiceReprintService;
+import org.bigmouth.gpt.utils.NetworkUtils;
 import org.bigmouth.gpt.xiaozhi.tts.*;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.http.ResponseEntity;
@@ -77,8 +78,9 @@ public class UserVoiceController {
         if (null == voiceReprintService) {
             return ResponseEntity.badRequest().body("不支持的语音平台。");
         }
+        String macAddress = NetworkUtils.getPlainMacAddress();
         String voiceSrcUrl = req.getVoiceSrcUrl();
-        String modelNamePrefix = "talkx" + userId;
+        String modelNamePrefix = "opentalkx_" + macAddress + "_" + userId;
         VoiceReprintResult result = voiceReprintService.reprint(new VoiceReprintRequest().setVoiceSrcUrl(voiceSrcUrl).setModelNamePrefix(modelNamePrefix));
         if (null == result) {
             return ResponseEntity.badRequest().body("创建失败，请联系管理员。");
