@@ -150,7 +150,6 @@ public class FriendMediaController {
         String apiKey = request.getApiKey();
         String proxyBaseUrl = request.getProxyBaseUrl();
         String baseUrl = UriComponentsBuilder.fromUriString(proxyBaseUrl)
-                .replacePath("/v1/")
                 .build()
                 .toString();
         OpenAiService openAiService = new OpenAiService(apiKey, timeout, baseUrl);
