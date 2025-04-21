@@ -19,7 +19,7 @@
                 自定义模型服务，必须支持OpenAI协议。
         </n-form-item>
         <n-form-item label="模型地址" path="proxyBaseUrl" v-if="formData.customModel === 1">
-            <n-input class="_input" v-model:value="formData.proxyBaseUrl" placeholder="请输入模型地址，如：https://api.aigateway.work/v1/" />
+            <n-input class="_input" v-model:value="formData.proxyBaseUrl" placeholder="请输入模型的完整请求地址，如：https://api.aigateway.work/v1/chat/completions" />
         </n-form-item>
         <n-form-item label="模型密钥" path="apiKey" v-if="formData.customModel === 1">
             <n-input class="_input" v-model:value="formData.apiKey" placeholder="请输入模型密钥，如：sk-8P7p27Stw5lkMn0jhHx6u6g8hfa7zXO1Jw8CPofz" />

@@ -149,7 +149,7 @@ public class FriendMediaController {
         Duration timeout = Duration.ofMinutes(5);
         String apiKey = request.getApiKey();
         String proxyBaseUrl = request.getProxyBaseUrl();
-        String baseUrl = UriComponentsBuilder.fromUriString(proxyBaseUrl)
+        String baseUrl = UriComponentsBuilder.fromUriString(proxyBaseUrl.replace("chat/completions", ""))
                 .build()
                 .toString();
         OpenAiService openAiService = new OpenAiService(apiKey, timeout, baseUrl);
