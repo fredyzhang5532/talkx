@@ -27,10 +27,7 @@ import org.bigmouth.gpt.ai.entity.Message;
 import org.bigmouth.gpt.autoconfigure.OpenAiServiceAutoConfiguration;
 import org.bigmouth.gpt.entity.*;
 import org.bigmouth.gpt.exceptions.AiStatusException;
-import org.bigmouth.gpt.service.IAiModelService;
-import org.bigmouth.gpt.service.IDeviceService;
-import org.bigmouth.gpt.service.ISessionMessageService;
-import org.bigmouth.gpt.service.IUserService;
+import org.bigmouth.gpt.service.*;
 import org.bigmouth.gpt.utils.Constants;
 import org.bigmouth.gpt.xiaozhi.audio.AudioCodec;
 import org.bigmouth.gpt.xiaozhi.audio.OpusEncoderUtils;
@@ -80,6 +77,7 @@ public class ChatCompletionEventListener implements EventListener<Speech2TextSuc
     private final AgentFactory agentFactory;
     private final IAiModelService aiModelService;
     private final MemoryServiceFactory memoryServiceFactory;
+    private final IFriendService friendService;
 
     @Override
     @Subscribe
@@ -186,27 +184,40 @@ public class ChatCompletionEventListener implements EventListener<Speech2TextSuc
         AiModel aiModel = null;
         ApiKey apiKey = null;
         UserFriendMediaConfig userFriendMediaConfig = context.getUserFriendMediaConfig();
-        if (null != userFriendMediaConfig) {
-            if (Objects.equals(Constants.YES, userFriendMediaConfig.getCustomModel())) {
-                String llmModel = userFriendMediaConfig.getLlmModel();
-                String proxyBaseUrl = user.getProxyBaseUrl();
-                Integer isSupportTool = userFriendMediaConfig.getIsSupportTool();
-                aiModel = AiModel.ofBasic(llmModel, proxyBaseUrl, isSupportTool);
-                apiKey = new ApiKey()
-                        .setUserPrivate(true)
-                        .setApiUrl(userFriendMediaConfig.getProxyBaseUrl())
-                        .setApiKey(userFriendMediaConfig.getApiKey());
-            } else {
-                String modelName = Optional.ofNullable(userFriendMediaConfig.getLlmModel()).orElse(user.getModel());
-                aiModel = aiModelService.get(modelName);
-            }
-        } else {
-            aiModel = aiModelService.get(xiaozhiConfig.getDefaultLlmModel());
+        if ((null != userFriendMediaConfig) && userFriendMediaConfig.isCustomModel()) {
+            // 优先自定义模型
+            String llmModel = userFriendMediaConfig.getLlmModel();
+            String proxyBaseUrl = user.getProxyBaseUrl();
+            Integer isSupportTool = userFriendMediaConfig.getIsSupportTool();
+            aiModel = AiModel.ofBasic(llmModel, proxyBaseUrl, isSupportTool);
+            apiKey = new ApiKey()
+                    .setUserPrivate(true)
+                    .setApiUrl(userFriendMediaConfig.getProxyBaseUrl())
+                    .setApiKey(userFriendMediaConfig.getApiKey());
         }
-
+        if (null == aiModel) {
+            // 不是自定义模型
+            Friend friend = friendService.getByRoleType(roleType);
+            if (friend.isAliyunDashscopeFriend()) {
+                // 如果是阿里云百炼应用，那么根据 workspace_id 和 app_id 来获取对应的模型。
+                String modelName = friend.getSpecialModelNameOfAliyunDashscope();
+                aiModel = aiModelService.get(modelName);
+                if (Objects.isNull(aiModel)) {
+                    // 如果没有配置对应的模型，那么使用一个空的模型。
+                    aiModel = AiModel.ofBasic(Constants.AiPlatform.PLATFORM_TYPE_ALIYUN_DASHSCOPE, modelName, null, Constants.NO);
+                }
+            }
+        }
+        if (null == aiModel) {
+            String modelName = Optional.ofNullable(userFriendMediaConfig)
+                    .map(UserFriendMediaConfig::getLlmModel)
+                    .orElse(xiaozhiConfig.getDefaultLlmModel());
+            aiModel = aiModelService.get(modelName);
+        }
         if (null == aiModel) {
             throw new AiStatusException(String.format("模型[%s]已经下线了，请切换到其他模型。", user.getModel()));
         }
+        log.info("Select model: {}", aiModel.getModelName());
         boolean isSupportTool = Objects.equals(aiModel.getIsSupportTool(), Constants.YES);
 
         List<ChatTool> chatTools = Lists.newArrayList();

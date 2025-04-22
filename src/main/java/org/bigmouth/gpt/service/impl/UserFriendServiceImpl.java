@@ -224,6 +224,7 @@ public class UserFriendServiceImpl extends ServiceImpl<UserFriendMapper, UserFri
             friend.setModifyTime(LocalDateTime.now());
             friendService.updateById(friend);
             friendService.deleteCacheById(friendId);
+            friendService.deleteCacheByRoleType(friend.getRoleType());
         }
 
         exists

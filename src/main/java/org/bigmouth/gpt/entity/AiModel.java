@@ -35,7 +35,7 @@ public class AiModel implements Serializable {
     private Long id;
 
     /**
-     * 平台类型。1 OpenAI、2 星火
+     * 平台类型。1 OpenAI、2 阿里云百炼
      */
     private Integer platformType;
 

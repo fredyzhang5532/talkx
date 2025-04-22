@@ -125,7 +125,7 @@ const getOptions = (item) => {
   if (ordinary) {
     // 普通AI类型才有 编辑
     arr.push({ label: "编辑", key: "edit" });
-    arr.push({ label: "智体", key: "device" });
+    arr.push({ label: "🤖 智体", key: "device" });
   }
   if (item.roleType !== "0") {
     arr.push({ label: "删除", key: "del" });
