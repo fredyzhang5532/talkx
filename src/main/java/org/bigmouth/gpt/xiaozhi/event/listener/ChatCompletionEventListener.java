@@ -184,7 +184,7 @@ public class ChatCompletionEventListener implements EventListener<Speech2TextSuc
         AiModel aiModel = null;
         ApiKey apiKey = null;
         UserFriendMediaConfig userFriendMediaConfig = context.getUserFriendMediaConfig();
-        if ((null != userFriendMediaConfig) && userFriendMediaConfig.isCustomModel()) {
+        if ((null != userFriendMediaConfig) && userFriendMediaConfig.isUseCustomModel()) {
             // 优先自定义模型
             String llmModel = userFriendMediaConfig.getLlmModel();
             String proxyBaseUrl = user.getProxyBaseUrl();

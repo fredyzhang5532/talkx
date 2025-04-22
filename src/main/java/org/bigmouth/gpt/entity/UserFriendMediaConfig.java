@@ -108,7 +108,7 @@ public class UserFriendMediaConfig implements Serializable {
 
     public static final String MODIFY_TIME = "modify_time";
 
-    public boolean isCustomModel() {
+    public boolean isUseCustomModel() {
         return Objects.equals(Constants.YES, getCustomModel());
     }
 }
