@@ -105,6 +105,11 @@ public class ApplicationConfig {
      */
     private FileUploadType defaultFileUploadType = FileUploadType.TALKX;
 
+    /**
+     * 阿里云百炼模型、应用调用时使用的密钥
+     */
+    private String aliyunDashscopeApiKey = "";
+
     @Data
     public static class CustomModel {
         private Set<Long> userIds = Sets.newHashSet();

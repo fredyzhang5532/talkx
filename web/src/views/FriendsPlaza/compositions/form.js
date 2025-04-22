@@ -14,6 +14,7 @@ export const defaultFormData = {
     avatar: default_friend_avatar,
     cssAvatar: "",
     name: "",
+    friendType: 1, // 新增类型字段，默认为基础对话
     tag: "",
     intro: "",
     welcome: "",
@@ -22,6 +23,9 @@ export const defaultFormData = {
     messageContextSize: 32,
     friendSource: SourceType.created,  
     conversationStart: [''],
+    aliyunDashscopeWorkspaceId: "",
+    aliyunDashscopeAppId: "",
+    aliyunDashscopeApiKey: "",
     openaiRequestBody: {
         maxTokens: 1000,
         temperature: 1.0,
@@ -100,6 +104,16 @@ export const config = {
 export const rules = {
     name: {
         required: true,
+        message: ' ',
+        trigger: 'blur'
+    },
+    aliyunDashscopeWorkspaceId: {
+        required: () => formData.value.friendType === 3,
+        message: ' ',
+        trigger: 'blur'
+    },
+    aliyunDashscopeAppId: {
+        required: () => formData.value.friendType === 3,
         message: ' ',
         trigger: 'blur'
     }

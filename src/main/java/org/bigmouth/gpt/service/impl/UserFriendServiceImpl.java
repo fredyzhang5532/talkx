@@ -169,7 +169,7 @@ public class UserFriendServiceImpl extends ServiceImpl<UserFriendMapper, UserFri
                 .setAvatar(request.getAvatar())
                 .setName(request.getName())
                 .setRoleType(roleType)
-                .setFriendType(Constants.Friend.FRIEND_TYPE_BASIC)
+                .setFriendType(request.getFriendType())
                 .setVoiceChat(request.getVoiceChat())
                 .setWelcome(request.getWelcome())
                 .setIntro(request.getIntro())
@@ -178,6 +178,9 @@ public class UserFriendServiceImpl extends ServiceImpl<UserFriendMapper, UserFri
                 .setCssAvatar(request.getCssAvatar())
                 .setTag(request.getTag())
                 .setConversactionStart(Optional.ofNullable(request.getConversationStart()).map(strings -> StringUtils.join(strings, ",")).orElse(null))
+                .setAliyunDashscopeWorkspaceId(request.getAliyunDashscopeWorkspaceId())
+                .setAliyunDashscopeAppId(request.getAliyunDashscopeAppId())
+                .setAliyunDashscopeApiKey(request.getAliyunDashscopeApiKey())
                 ;
         friendService.save(friend);
 
@@ -214,6 +217,9 @@ public class UserFriendServiceImpl extends ServiceImpl<UserFriendMapper, UserFri
         Friend friend = friendService.getById(friendId);
         boolean own = Objects.equals(exists.getSource(), Constants.Friend.SOURCE_SELF_BUILD);
         if (own) {
+            friend.setAliyunDashscopeWorkspaceId(request.getAliyunDashscopeWorkspaceId());
+            friend.setAliyunDashscopeAppId(request.getAliyunDashscopeAppId());
+            friend.setAliyunDashscopeApiKey(request.getAliyunDashscopeApiKey());
             friend.setConversactionStart(Optional.ofNullable(request.getConversationStart()).map(strings -> StringUtils.join(strings, ",")).orElse(null));
             friend.setModifyTime(LocalDateTime.now());
             friendService.updateById(friend);
@@ -287,7 +293,7 @@ public class UserFriendServiceImpl extends ServiceImpl<UserFriendMapper, UserFri
                     return FriendVo.of(friend, userFriend);
                 }).filter(Objects::nonNull).collect(Collectors.toList());
             }
-        }, FriendVo.class, 30 * 60);
+        }, FriendVo.class, 60);
     }
 
     @Override

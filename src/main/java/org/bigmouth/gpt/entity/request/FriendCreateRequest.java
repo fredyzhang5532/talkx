@@ -22,6 +22,11 @@ public class FriendCreateRequest {
     private int productType = Constants.PRODUCT_TYPE_WEB;
 
     /**
+     * AI 类型。1 普通、2 GPTs、3 阿里云百炼应用
+     */
+    private Integer friendType = Constants.Friend.FRIEND_TYPE_BASIC;
+
+    /**
      * 头像地址
      */
     private String avatar = Constants.DEFAULT_AVATAR_URL;
@@ -75,4 +80,19 @@ public class FriendCreateRequest {
      * 模型设置
      */
     private FriendCreateModelConfig openaiRequestBody = new FriendCreateModelConfig();
+
+    /**
+     * 阿里云百炼工作空间ID
+     */
+    private String aliyunDashscopeWorkspaceId;
+
+    /**
+     * 阿里云百炼应用ID
+     */
+    private String aliyunDashscopeAppId;
+
+    /**
+     * 阿里云百炼应用密钥
+     */
+    private String aliyunDashscopeApiKey;
 }

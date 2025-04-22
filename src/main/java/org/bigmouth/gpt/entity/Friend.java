@@ -8,16 +8,18 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 import org.apache.commons.lang3.StringUtils;
+import org.bigmouth.gpt.utils.Constants;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
 
 /**
  * <p>
- * 
+ *
  * </p>
  *
  * @author allen
@@ -43,7 +45,7 @@ public class Friend implements Serializable {
     private String roleType;
 
     /**
-     * AI 类型。1 普通、2 GPTs
+     * AI 类型。1 普通、2 GPTs、3 阿里云百炼应用
      */
     private Integer friendType;
 
@@ -106,6 +108,21 @@ public class Friend implements Serializable {
      */
     private String apiKey;
 
+    /**
+     * 阿里云百炼工作空间ID
+     */
+    private String aliyunDashscopeWorkspaceId;
+
+    /**
+     * 阿里云百炼应用ID
+     */
+    private String aliyunDashscopeAppId;
+
+    /**
+     * 阿里云百炼应用密钥
+     */
+    private String aliyunDashscopeApiKey;
+
     private LocalDateTime createTime;
 
     private LocalDateTime modifyTime;
@@ -145,6 +162,16 @@ public class Friend implements Serializable {
 
     public static final String TAG = "tag";
 
+    public static final String REQUEST_URL = "request_url";
+
+    public static final String API_KEY = "api_key";
+
+    public static final String ALIYUN_DASHSCOPE_WORKSPACE_ID = "aliyun_dashscope_workspace_id";
+
+    public static final String aliyun_dashscope_app_id = "aliyun_dashscope_app_id";
+
+    public static final String aliyun_dashscope_api_key = "aliyun_dashscope_api_key";
+
     public static final String CREATE_TIME = "create_time";
 
     public static final String MODIFY_TIME = "modify_time";
@@ -155,5 +182,17 @@ public class Friend implements Serializable {
         return Optional.ofNullable(getConversactionStart())
                 .map((Function<String, List<String>>) s -> Lists.newArrayList(StringUtils.split(s, ",")))
                 .orElse(null);
+    }
+
+    public boolean isAliyunDashscopeFriend() {
+        return Objects.equals(getFriendType(), Constants.Friend.FRIEND_TYPE_ALIYUN_DASHSCOPE_APP);
+    }
+
+    /**
+     * @return
+     * {aliyunDashscopeWorkspaceId}${aliyunDashscopeAppId}
+     */
+    public String getSpecialModelNameOfAliyunDashscope() {
+        return Optional.ofNullable(getAliyunDashscopeWorkspaceId()).orElse(StringUtils.EMPTY) + "$" + getAliyunDashscopeAppId();
     }
 }

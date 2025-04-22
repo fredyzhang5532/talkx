@@ -67,6 +67,7 @@ const getData = async () => {
     avatar,
     cssAvatar,
     name,
+    friendType,
     tag = tags.value[0].name,
     intro,
     welcome,
@@ -74,6 +75,9 @@ const getData = async () => {
     contentPrompt,
     friendSource = defaultFormData.friendSource,
     conversationStart = defaultFormData.conversationStart,
+    aliyunDashscopeWorkspaceId,
+    aliyunDashscopeAppId,
+    aliyunDashscopeApiKey,
     messageContextSize = defaultFormData.messageContextSize,
     openaiRequestBody = JSON.parse(
       JSON.stringify(defaultFormData.openaiRequestBody)
@@ -83,6 +87,7 @@ const getData = async () => {
     avatar,
     cssAvatar,
     name,
+    friendType,
     tag,
     intro,
     welcome,
@@ -90,6 +95,9 @@ const getData = async () => {
     contentPrompt,
     friendSource,
     conversationStart,
+    aliyunDashscopeWorkspaceId,
+    aliyunDashscopeAppId,
+    aliyunDashscopeApiKey,
     messageContextSize: Number(messageContextSize),
     openaiRequestBody,
   };

@@ -68,8 +68,14 @@ public interface Constants {
      * Ai平台常量设置
      */
     interface AiPlatform {
+        /**
+         * OpenAI协议平台
+         */
         int PLATFORM_TYPE_OPENAI = 1;
-        int PLATFORM_TYPE_XINGHUO = 2;
+        /**
+         * 阿里云百炼平台
+         */
+        int PLATFORM_TYPE_ALIYUN_DASHSCOPE = 2;
 
         int MODEL_GROUP_GPT3_5 = 1;
         int MODEL_GROUP_GPT4 = 2;
@@ -207,5 +213,9 @@ public interface Constants {
 
         int FRIEND_TYPE_BASIC = 1;
         int FRIEND_TYPE_GPTS = 2;
+        /**
+         * 阿里云百炼应用
+         */
+        int FRIEND_TYPE_ALIYUN_DASHSCOPE_APP = 3;
     }
 }

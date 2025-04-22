@@ -8,10 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import org.apache.catalina.connector.ClientAbortException;
-import org.bigmouth.gpt.entity.AiModel;
-import org.bigmouth.gpt.entity.ChatRequest;
-import org.bigmouth.gpt.entity.Prompt;
-import org.bigmouth.gpt.entity.User;
+import org.bigmouth.gpt.entity.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
@@ -33,6 +30,10 @@ public class ChatServiceArgument {
      * 用户信息，游客时是null
      */
     private User user;
+    /**
+     * 对应的好友信息，有可能是null
+     */
+    private Friend friend;
     /**
      * 模型配置信息
      */

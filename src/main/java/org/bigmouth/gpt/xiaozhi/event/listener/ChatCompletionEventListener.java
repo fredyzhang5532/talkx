@@ -51,7 +51,6 @@ import org.bigmouth.gpt.xiaozhi.udp.AudioResponseSequence;
 import org.bigmouth.gpt.xiaozhi.udp.UdpClientContext;
 import org.springframework.context.annotation.Configuration;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -189,16 +188,10 @@ public class ChatCompletionEventListener implements EventListener<Speech2TextSuc
         UserFriendMediaConfig userFriendMediaConfig = context.getUserFriendMediaConfig();
         if (null != userFriendMediaConfig) {
             if (Objects.equals(Constants.YES, userFriendMediaConfig.getCustomModel())) {
-                aiModel = new AiModel()
-                        .setPlatformType(Constants.AiPlatform.PLATFORM_TYPE_OPENAI)
-                        .setModelName(userFriendMediaConfig.getLlmModel())
-                        .setModelGroup(1)
-                        .setRequestUrl(user.getProxyBaseUrl())
-                        .setMaxToken(Integer.MAX_VALUE)
-                        .setInputPrice(BigDecimal.ZERO).setCachedPrice(BigDecimal.ZERO).setOutPrice(BigDecimal.ZERO)
-                        .setSettleCurrency(2)
-                        .setCoinCostPer(BigDecimal.ZERO).setInputCoins(BigDecimal.ZERO).setOutputCoins(BigDecimal.ZERO)
-                        .setIsSupportTool(userFriendMediaConfig.getIsSupportTool());
+                String llmModel = userFriendMediaConfig.getLlmModel();
+                String proxyBaseUrl = user.getProxyBaseUrl();
+                Integer isSupportTool = userFriendMediaConfig.getIsSupportTool();
+                aiModel = AiModel.ofBasic(llmModel, proxyBaseUrl, isSupportTool);
                 apiKey = new ApiKey()
                         .setUserPrivate(true)
                         .setApiUrl(userFriendMediaConfig.getProxyBaseUrl())

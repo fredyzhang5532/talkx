@@ -105,7 +105,7 @@ public class ChatServiceFactory implements BeanPostProcessor {
         }
         argument.setPrompt(prompt);
 
-        String modelName = Model.GPT_3_5_TURBO.getName();
+        String modelName = applicationConfig.getLlmModelName();
 
         Friend friend = friendService.getByRoleType(roleType);
         if (Objects.nonNull(friend) && Objects.equals(Constants.YES, friend.getIsPermission())) {
@@ -118,6 +118,8 @@ public class ChatServiceFactory implements BeanPostProcessor {
                 throw new AiStatusException("对不起，你没有权限访问这个好友，申请权限请联系管理员。");
             }
         }
+        argument.setFriend(friend);
+
         String friendFixedModel = Optional.ofNullable(friend).map(Friend::getFixedModel).orElse(null);
 
         AiModel aiModel = argument.getAiModel();
@@ -127,6 +129,14 @@ public class ChatServiceFactory implements BeanPostProcessor {
                 // 如果角色需要固定的Key，那么同时使用基础模型。
                 // 并且需要在 api_keys 里配置对应 role_type 的密钥，否则不能使用。
                 aiModel = aiModelService.get(modelName);
+            } else if (friend.isAliyunDashscopeFriend()) {
+                // 如果是阿里云百炼应用，那么根据 workspace_id 和 app_id 来获取对应的模型。
+                modelName = friend.getSpecialModelNameOfAliyunDashscope();
+                aiModel = aiModelService.get(modelName);
+                if (Objects.isNull(aiModel)) {
+                    // 如果没有配置对应的模型，那么使用一个空的模型。
+                    aiModel = AiModel.ofBasic(Constants.AiPlatform.PLATFORM_TYPE_ALIYUN_DASHSCOPE, modelName, null, Constants.NO);
+                }
             } else if (prompt.isGpts()) {
                 modelName = Model.GPT_4_GIZMO.getName();
                 if (Objects.nonNull(friendFixedModel)) {
@@ -134,7 +144,6 @@ public class ChatServiceFactory implements BeanPostProcessor {
                 }
                 aiModel = aiModelService.get(modelName);
             } else {
-                // fetch model, If guest default use gpt-3.5-turbo
                 modelName = Optional.ofNullable(friendFixedModel)
                         .orElseGet(() -> Optional.ofNullable(user)
                                 .map(User::getSelectedModelName)

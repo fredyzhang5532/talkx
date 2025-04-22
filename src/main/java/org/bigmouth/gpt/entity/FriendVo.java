@@ -107,6 +107,26 @@ public class FriendVo {
      */
     private List<String> conversationStart;
 
+    /**
+     * 指定模型
+     */
+    private String fixedModel;
+
+    /**
+     * 阿里云百炼工作空间ID
+     */
+    private String aliyunDashscopeWorkspaceId;
+
+    /**
+     * 阿里云百炼应用ID
+     */
+    private String aliyunDashscopeAppId;
+
+    /**
+     * 阿里云百炼应用密钥
+     */
+    private String aliyunDashscopeApiKey;
+
     public static FriendVo of(Friend friend) {
         FriendVo vo = new FriendVo()
                 .setId(friend.getId())
@@ -154,8 +174,13 @@ public class FriendVo {
 
         String fixedModel = friend.getFixedModel();
         vo.setShowModelSelect(StringUtils.isBlank(fixedModel));
+        vo.setFixedModel(fixedModel);
 
         vo.setConversationStart(friend.getConversactionStartSet());
+
+        vo.setAliyunDashscopeWorkspaceId(friend.getAliyunDashscopeWorkspaceId())
+                .setAliyunDashscopeAppId(friend.getAliyunDashscopeAppId())
+                .setAliyunDashscopeApiKey(friend.getAliyunDashscopeApiKey());
     }
 
     @Data

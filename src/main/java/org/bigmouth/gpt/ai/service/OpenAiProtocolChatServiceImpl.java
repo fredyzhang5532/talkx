@@ -558,44 +558,4 @@ public class OpenAiProtocolChatServiceImpl implements ChatService, Ordered, Open
         }
         return false;
     }
-
-    private static class FlowableState {
-
-        /**
-         * 接收到第一个数据的时间
-         */
-        private long firstByteTimeInNanoTime;
-        private Throwable throwable;
-        private StringBuilder completion = new StringBuilder();
-
-        public void append(String str) {
-            completion.append(str);
-        }
-
-        public void initFirstByteTimeInNanoTime() {
-            if (this.firstByteTimeInNanoTime == 0) {
-                this.firstByteTimeInNanoTime = System.nanoTime();
-            }
-        }
-
-        public Throwable getThrowable() {
-            return throwable;
-        }
-
-        public boolean isOccurError() {
-            return throwable != null;
-        }
-
-        public StringBuilder getCompletion() {
-            return completion;
-        }
-
-        public void setThrowable(Throwable throwable) {
-            this.throwable = throwable;
-        }
-
-        public long getFirstByteTimeInNanoTime() {
-            return firstByteTimeInNanoTime;
-        }
-    }
 }

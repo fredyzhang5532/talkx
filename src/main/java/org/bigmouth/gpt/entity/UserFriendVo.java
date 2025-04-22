@@ -4,6 +4,7 @@ import com.bxm.warcar.utils.JsonHelper;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import org.bigmouth.gpt.entity.request.FriendCreateModelConfig;
+import org.bigmouth.gpt.utils.Constants;
 
 import java.util.List;
 
@@ -105,9 +106,29 @@ public class UserFriendVo {
     private List<String> conversationStart;
 
     /**
+     * AI 类型。1 普通、2 GPTs
+     */
+    private int friendType = Constants.Friend.FRIEND_TYPE_BASIC;
+
+    /**
      * 添加来源。1 好友广场、2 自建
      */
     private int friendSource;
+
+    /**
+     * 阿里云百炼工作空间ID
+     */
+    private String aliyunDashscopeWorkspaceId;
+
+    /**
+     * 阿里云百炼应用ID
+     */
+    private String aliyunDashscopeAppId;
+
+    /**
+     * 阿里云百炼应用密钥
+     */
+    private String aliyunDashscopeApiKey;
 
     public static UserFriendVo of(Friend friend, UserFriend o) {
         return new UserFriendVo()
@@ -131,6 +152,10 @@ public class UserFriendVo {
                 .setOpenaiRequestBody(JsonHelper.convert(o.getOpenaiRequestBody(), FriendCreateModelConfig.class))
                 .setConversationStart(friend.getConversactionStartSet())
                 .setFriendSource(o.getSource())
+                .setFriendType(friend.getFriendType())
+                .setAliyunDashscopeWorkspaceId(friend.getAliyunDashscopeWorkspaceId())
+                .setAliyunDashscopeAppId(friend.getAliyunDashscopeAppId())
+                .setAliyunDashscopeApiKey(friend.getAliyunDashscopeApiKey())
                 ;
     }
 }

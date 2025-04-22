@@ -36,9 +36,7 @@ public class FriendServiceImpl extends ServiceImpl<FriendMapper, Friend> impleme
 
     @Override
     public Friend getByRoleType(String roleType) {
-        return fetcher.fetch(RedisKeys.AboutFriend.stringFriend(roleType),
-                () -> getOne(Wrappers.query(new Friend().setRoleType(roleType))),
-                Friend.class, 60);
+        return getOne(Wrappers.query(new Friend().setRoleType(roleType)));
     }
 
     @Override
