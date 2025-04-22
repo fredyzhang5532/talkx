@@ -44,20 +44,18 @@ public class TtsServiceFactory {
     private TtsService createInstanceThrowsIllegal(String sessionId, TtsPlatformType ttsPlatformType, String voiceModel, String voiceRole) {
         switch (ttsPlatformType) {
             case Alibaba:
-                String dashscopeApiKey = xiaozhiAlibabaConfig.getDashscopeApiKey();
-                if (dashscopeApiKey == null || dashscopeApiKey.isEmpty()) {
+                if (xiaozhiAlibabaConfig.isDisable()) {
                     throw new IllegalArgumentException("Dashscope API key is not set.");
                 }
+                String dashscopeApiKey = xiaozhiAlibabaConfig.getDashscopeApiKey();
                 voiceModel = Optional.ofNullable(voiceModel).orElse(xiaozhiAlibabaConfig.getCosyVoiceDefaultModel());
                 voiceRole = Optional.ofNullable(voiceRole).orElse(xiaozhiAlibabaConfig.getCosyVoiceDefaultVoice());
                 return new AlibabaDashscopeTtsService(cosyVoiceObjectPool, dashscopeApiKey, voiceModel, voiceRole);
             case ByteDance:
-                String ttsUrl = xiaozhiByteDanceConfig.getTtsUrl();
-                String appId = xiaozhiByteDanceConfig.getAppId();
-                String accessToken = xiaozhiByteDanceConfig.getAccessToken();
-                if (ttsUrl == null || ttsUrl.isEmpty() || appId == null || appId.isEmpty() || accessToken == null || accessToken.isEmpty()) {
+                if (xiaozhiByteDanceConfig.isDisable()) {
                     throw new IllegalArgumentException("ByteDance TTS URL, App ID or Access Token is not set.");
                 }
+                String appId = xiaozhiByteDanceConfig.getAppId();
                 voiceRole = Optional.ofNullable(voiceRole).orElse(xiaozhiByteDanceConfig.getDefaultVoice());
                 return new ByteDanceTtsService(appId, voiceRole, speechWsClientObjectPool);
             case TalkX:
