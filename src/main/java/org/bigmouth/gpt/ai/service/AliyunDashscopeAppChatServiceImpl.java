@@ -22,8 +22,6 @@ import org.bigmouth.gpt.event.ChatRequestEvent;
 import org.bigmouth.gpt.exceptions.AiAccountException;
 import org.bigmouth.gpt.utils.Constants;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.MediaType;
-import org.springframework.util.MimeType;
 
 import java.util.List;
 import java.util.Objects;
@@ -64,16 +62,7 @@ public class AliyunDashscopeAppChatServiceImpl implements ChatService {
         if (attachments != null && !attachments.isEmpty()) {
             for (AttachVo attachment : attachments) {
                 String url = attachment.getUrl();
-                String mimeType = attachment.getMimeType();
-                MediaType mediaType = MediaType.asMediaType(MimeType.valueOf(mimeType));
-                boolean mediaTypePresentIn = mediaType.isPresentIn(Lists.newArrayList(
-                        MediaType.IMAGE_JPEG,
-                        MediaType.IMAGE_PNG,
-                        MediaType.IMAGE_GIF
-                ));
-                if (mediaTypePresentIn) {
-                    images.add(url);
-                }
+                images.add(url);
             }
         }
         final StringBuilder msgBuilder = new StringBuilder();
