@@ -10,10 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.bigmouth.gpt.ApplicationConfig;
 import org.bigmouth.gpt.ai.ChatService;
-import org.bigmouth.gpt.ai.entity.ChatServiceArgument;
-import org.bigmouth.gpt.ai.entity.FlowableState;
-import org.bigmouth.gpt.ai.entity.Message;
-import org.bigmouth.gpt.ai.entity.Usage;
+import org.bigmouth.gpt.ai.entity.*;
 import org.bigmouth.gpt.entity.AttachVo;
 import org.bigmouth.gpt.entity.ChatRequest;
 import org.bigmouth.gpt.entity.Friend;
@@ -119,6 +116,16 @@ public class AliyunDashscopeAppChatServiceImpl implements ChatService {
 
             throw new AiAccountException(e);
         } finally {
+            Handler4 complete = argument.getComplete();
+            if (Objects.nonNull(complete)) {
+                String systemPrompt = null;
+                Message message = chatRequest.getMessages().get(0);
+                if (StringUtils.equals(message.getRole(), GptRole.SYSTEM.getName())) {
+                    systemPrompt = message.getContent();
+                }
+                complete.handle(systemPrompt, msgBuilder.toString());
+            }
+
             // 发送请求完成的事件
             ChatCompletionEvent.Parameter parameter = ChatCompletionEvent.Parameter.builder()
                     .user(argument.getUser())
