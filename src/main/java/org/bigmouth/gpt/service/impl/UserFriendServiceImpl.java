@@ -226,8 +226,11 @@ public class UserFriendServiceImpl extends ServiceImpl<UserFriendMapper, UserFri
 
         Long friendId = exists.getFriendId();
 
-        // 允许修改自己创建的快速开始
         Friend friend = friendService.getById(friendId);
+        Integer productType = exists.getProductType();
+        String roleType = friend.getRoleType();
+
+        // 允许修改自己创建的快速开始
         boolean own = Objects.equals(exists.getSource(), Constants.Friend.SOURCE_SELF_BUILD);
         if (own) {
             friend.setAliyunDashscopeWorkspaceId(request.getAliyunDashscopeWorkspaceId());
@@ -237,7 +240,23 @@ public class UserFriendServiceImpl extends ServiceImpl<UserFriendMapper, UserFri
             friend.setModifyTime(LocalDateTime.now());
             friendService.updateById(friend);
             friendService.deleteCacheById(friendId);
-            friendService.deleteCacheByRoleType(friend.getRoleType());
+            friendService.deleteCacheByRoleType(roleType);
+
+            // 如果是百炼应用，那么修改所有用户的提示词
+            if (friend.isAliyunDashscopeFriend()) {
+                this.updateSystemPrompt(friendId, request.getSystemPrompt());
+                List<Long> userIds = baseMapper.getUserIdByFriendId(friendId);
+                if (CollectionUtils.isNotEmpty(userIds)) {
+                    for (Long uId : userIds) {
+                        this.deleteFriendCache(uId, productType, roleType);
+                    }
+                }
+                PromptConfig promptConfig = promptConfigService.getOne(roleType);
+                if (Objects.nonNull(promptConfig)) {
+                    promptConfig.setSystemPrompt(request.getSystemPrompt());
+                    promptConfigService.saveOrUpdate(promptConfig);
+                }
+            }
         }
 
         exists.setAvatar(request.getAvatar())
@@ -257,8 +276,8 @@ public class UserFriendServiceImpl extends ServiceImpl<UserFriendMapper, UserFri
 
         updateById(exists);
 
-        this.deleteFriendListCache(exists.getProductType(), user);
-        this.deleteFriendCache(userId, exists.getProductType(), exists.getRoleType());
+        this.deleteFriendListCache(productType, user);
+        this.deleteFriendCache(userId, productType, roleType);
 
         return FriendVo.of(friend, exists);
     }
@@ -315,6 +334,16 @@ public class UserFriendServiceImpl extends ServiceImpl<UserFriendMapper, UserFri
     @Override
     public List<FriendVo> getFriendsForGuest() {
         return getFriendsForGuestMap().values().stream().map(FriendVo::of).collect(Collectors.toList());
+    }
+
+    /**
+     * 修改用户好友的系统提示词
+     * @param friendId 好友id
+     * @param systemPrompt 提示词
+     * @return 影响行数
+     */
+    public int updateSystemPrompt(Long friendId, String systemPrompt) {
+        return getBaseMapper().updateSystemPrompt(friendId, systemPrompt);
     }
 
     private long countSelfBuildFriend(Integer productType, User user) {

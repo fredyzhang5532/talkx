@@ -57,7 +57,7 @@
         <div class="desc">建立新话题页面所展示的招呼</div>
       </div>
     </n-form-item>
-    <n-form-item label="指令" path="systemPrompt">
+    <n-form-item label="指令" path="systemPrompt" v-if="formData.friendType === 1 || (formData.friendType === 3 && formData.friendSource === SourceType.created)">
       <div class="item_contet">
         <n-input
           class="_input"
@@ -72,7 +72,7 @@
           <div>设置这个AI的系统指令（角色描述），通过
           <span class="model_look" @click="modelLook">「这里」</span>
           可以获取一些帮助</div>
-          <div>当AI类型是阿里云百炼应用时，设置该指令将会覆盖应用已经配置的提示词。</div>
+          <div v-if="formData.friendType === 3">当AI类型是阿里云百炼应用时，设置该指令将会覆盖应用在百炼后台已经配置的提示词。而且会同步更新其他用户已添加该AI的指令。</div>
         </div>
       </div>
     </n-form-item>
