@@ -15,10 +15,7 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotBlank;
 import java.security.InvalidKeyException;
@@ -26,6 +23,7 @@ import java.security.NoSuchAlgorithmException;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.util.Objects;
+import java.util.UUID;
 
 /**
  * @author Allen Hu
@@ -49,7 +47,9 @@ public class OtaController {
     }
 
     @PostMapping("/ota")
-    public ResponseEntity<String> ota(@RequestBody @Validated OtaRequest request) {
+    public ResponseEntity<String> ota(@RequestBody @Validated OtaRequest request,
+                                      @RequestHeader("Device-Id") String deviceId,
+                                      @RequestHeader(value = "Client-Id", required = false) String clientId) {
         String macAddress = request.getMacAddress();
         OtaResponse response = new OtaResponse();
 
@@ -79,6 +79,7 @@ public class OtaController {
             String bindCode = deviceService.createBindCode(new OtaBindInf().setRequest(request).setResponse(response));
             activation.setMessage(bindCode);
             activation.setCode(bindCode);
+            activation.setChallenge(UUID.randomUUID().toString());
 
             response.setActivation(activation);
         } else {
@@ -94,6 +95,17 @@ public class OtaController {
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(JsonHelper.convert(response));
+    }
+
+    @PostMapping("/ota/activate")
+    public ResponseEntity<String> activate(@RequestBody @Validated String json,
+                                           @RequestHeader("Device-Id") String deviceId,
+                                           @RequestHeader(value = "Client-Id", required = false) String clientId) {
+        Device device = deviceService.find(deviceId);
+        if (Objects.isNull(device)) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok("success");
     }
 
     @PostMapping("/ota/mqtt")
