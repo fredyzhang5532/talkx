@@ -19,6 +19,9 @@
     <div class="badge" v-if="props.data.friendType == 2">
       <div class="text">GPTs</div>
     </div>
+    <div class="badge" v-if="props.data.friendType == 3">
+      <div class="text">百炼应用</div>
+    </div>
   </div>
 </template>
 
