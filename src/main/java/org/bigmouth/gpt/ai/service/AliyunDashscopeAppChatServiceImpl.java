@@ -85,7 +85,7 @@ public class AliyunDashscopeAppChatServiceImpl implements ChatService {
 
         try {
             String variables = prompt.getVariables();
-            JsonObject jsonObject = JsonUtils.parse(variables);
+            JsonObject jsonObject = StringUtils.isBlank(variables) ? new JsonObject() : JsonUtils.parse(variables);
 
             ApplicationParam param = ApplicationParam.builder()
                     .apiKey(Optional.ofNullable(friend.getAliyunDashscopeApiKey()).filter(StringUtils::isNotBlank).orElse(applicationConfig.getAliyunDashscopeApiKey()))
