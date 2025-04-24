@@ -1,14 +1,18 @@
 package org.bigmouth.gpt;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import lombok.Data;
+import org.bigmouth.gpt.ai.prompt.SystemPromptParser;
+import org.bigmouth.gpt.ai.prompt.UserPromptParser;
 import org.bigmouth.gpt.service.FileUploadType;
 import org.bigmouth.gpt.entity.response.ModelResponse;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -99,6 +103,20 @@ public class ApplicationConfig {
      * 是否开启Redis缓存
      */
     private boolean enableRedisCache = false;
+
+    /**
+     * 系统提示词解析器
+     * key = roleType
+     * value = SystemPromptParser
+     */
+    private Map<String, Class<? extends SystemPromptParser>> systemPromptParserMap = Maps.newHashMap();
+
+    /**
+     * 用户提示词解析器
+     * key = roleType
+     * value = UserPromptParser
+     */
+    private Map<String, Class<? extends UserPromptParser>> userPromptParserMap = Maps.newHashMap();
 
     /**
      * 指定文件上传实现的类型，默认：TalkX

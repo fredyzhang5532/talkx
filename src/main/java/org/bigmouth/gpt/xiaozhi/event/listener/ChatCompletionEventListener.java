@@ -20,10 +20,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.bigmouth.gpt.ai.ChatServiceFactory;
 import org.bigmouth.gpt.ai.agent.AgentFactory;
-import org.bigmouth.gpt.ai.entity.ApiKey;
-import org.bigmouth.gpt.ai.entity.ChatServiceArgument;
-import org.bigmouth.gpt.ai.entity.GptRole;
-import org.bigmouth.gpt.ai.entity.Message;
+import org.bigmouth.gpt.ai.entity.*;
 import org.bigmouth.gpt.autoconfigure.OpenAiServiceAutoConfiguration;
 import org.bigmouth.gpt.entity.*;
 import org.bigmouth.gpt.exceptions.AiStatusException;
@@ -302,25 +299,37 @@ public class ChatCompletionEventListener implements EventListener<Speech2TextSuc
                         }
                     }
                 })
-                .flushRunnable(() -> {})
-                .clientAbortExceptionStringBiConsumer((e, s) -> {})
-                .complete((systemPrompt, completion) -> {
-                    // 处理剩余的累积内容
-                    if (accumulatedContent.length() > 0) {
-                        String segment = accumulatedContent.toString();
-                        accumulatedContent.setLength(0);
+                .complete(new CompleteConsumer() {
+                    @Override
+                    public void accept(List<Message> messages) {
+                        // 处理剩余的累积内容
+                        if (accumulatedContent.length() > 0) {
+                            String segment = accumulatedContent.toString();
+                            accumulatedContent.setLength(0);
 
-                        sendSegmentAudio2Client(segment, context);
+                            sendSegmentAudio2Client(segment, context);
+                        }
+
+                        String completion = null;
+
+                        // 从 messages 从后往前查到第一个 assistant role的消息为止
+                        for (int i = messages.size() - 1; i >= 0; i--) {
+                            Message message = messages.get(i);
+                            if (message.getRole().equals(GptRole.ASSISTANT.getName())) {
+                                completion = message.getContent();
+                                break;
+                            }
+                        }
+
+                        ChatCompleteEntity chatCompleteEntity = ChatCompleteEntity.builder()
+                                .sessionId(sessionId)
+                                .session(session)
+                                .messages(messages)
+                                .userPrompt(text)
+                                .completion(completion)
+                                .build();
+                        chatCompleteEndHandler.handle(chatCompleteEntity);
                     }
-
-                    ChatCompleteEntity chatCompleteEntity = ChatCompleteEntity.builder()
-                            .sessionId(sessionId)
-                            .session(session)
-                            .systemPrompt(systemPrompt)
-                            .userPrompt(text)
-                            .completion(completion)
-                            .build();
-                    chatCompleteEndHandler.handle(chatCompleteEntity);
                 })
                 .chatTools(chatTools)
                 .functionExecutorManager(functionExecutorManager)
@@ -349,7 +358,7 @@ public class ChatCompletionEventListener implements EventListener<Speech2TextSuc
                         return systemPrompt.toString();
                     }
                 })
-                .xiaozhiIotFunctionExecutor(new Function<ChatToolCall, ToolMessage>() {
+                .customFunctionExecutor(new Function<ChatToolCall, ToolMessage>() {
                     @Override
                     public ToolMessage apply(ChatToolCall chatToolCall) {
                         // 发送 IoT 命令

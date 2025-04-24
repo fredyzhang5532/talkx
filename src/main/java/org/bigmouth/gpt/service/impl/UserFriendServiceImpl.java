@@ -74,6 +74,11 @@ public class UserFriendServiceImpl extends ServiceImpl<UserFriendMapper, UserFri
     }
 
     @Override
+    public void deleteFriendCache(Long userId, Integer productType, String roleType) {
+        updater.remove(RedisKeys.AboutFriend.stringUserFriend(userId, productType, roleType));
+    }
+
+    @Override
     @Transactional(rollbackFor = Exception.class)
     public void setTop(User user, Long friendId, boolean isTop) {
         UserFriend userFriend = super.getOne(Wrappers.query(new UserFriend().setUserId(user.getId()).setFriendId(friendId)));
@@ -83,7 +88,7 @@ public class UserFriendServiceImpl extends ServiceImpl<UserFriendMapper, UserFri
         userFriend.setTop(isTop ? Constants.YES : Constants.NO);
         userFriend.setModifyTime(LocalDateTime.now());
         super.updateById(userFriend);
-        this.deleteCache(userFriend.getProductType(), user);
+        this.deleteFriendListCache(userFriend.getProductType(), user);
     }
 
     @Override
@@ -115,11 +120,13 @@ public class UserFriendServiceImpl extends ServiceImpl<UserFriendMapper, UserFri
                 .setSource(Constants.Friend.SOURCE_PLAZA)
                 .setProductType(Constants.PRODUCT_TYPE_WEB)
                 .setSystemPrompt(prompt.getSystemPrompt())
+                .setContentPrompt(prompt.getContentPrompt())
                 .setOpenaiRequestBody(prompt.getOpenaiRequestBody())
+                .setVariables(friend.getVariables())
                 .setGptsId(prompt.getGptsId());
 
         super.save(userFriend);
-        this.deleteCache(Constants.PRODUCT_TYPE_WEB, user);
+        this.deleteFriendListCache(Constants.PRODUCT_TYPE_WEB, user);
         return FriendVo.of(friend, userFriend);
     }
 
@@ -140,7 +147,7 @@ public class UserFriendServiceImpl extends ServiceImpl<UserFriendMapper, UserFri
         }
 
         super.removeById(userFriend.getId());
-        this.deleteCache(userFriend.getProductType(), user);
+        this.deleteFriendListCache(userFriend.getProductType(), user);
         eventPark.post(new DeleteUserFriendEvent(this, user, userFriend));
     }
 
@@ -155,11 +162,13 @@ public class UserFriendServiceImpl extends ServiceImpl<UserFriendMapper, UserFri
         // 1、创建一个 prompt
         String roleType = promptConfigService.createRoleType();
         String systemPrompt = request.getSystemPrompt();
+        String contentPrompt = request.getContentPrompt();
         FriendCreateModelConfig openaiRequestBody = request.getOpenaiRequestBody();
         String requestBody = JsonHelper.convert(openaiRequestBody);
         PromptConfig prompt = new PromptConfig()
                 .setRoleType(roleType)
                 .setSystemPrompt(systemPrompt)
+                .setContentPrompt(contentPrompt)
                 .setMessageContextSize(request.getMessageContextSize())
                 .setOpenaiRequestBody(requestBody);
         promptConfigService.save(prompt);
@@ -181,6 +190,7 @@ public class UserFriendServiceImpl extends ServiceImpl<UserFriendMapper, UserFri
                 .setAliyunDashscopeWorkspaceId(request.getAliyunDashscopeWorkspaceId())
                 .setAliyunDashscopeAppId(request.getAliyunDashscopeAppId())
                 .setAliyunDashscopeApiKey(request.getAliyunDashscopeApiKey())
+                .setVariables(request.getVariables())
                 ;
         friendService.save(friend);
 
@@ -190,11 +200,14 @@ public class UserFriendServiceImpl extends ServiceImpl<UserFriendMapper, UserFri
                 .setSource(Constants.Friend.SOURCE_SELF_BUILD)
                 .setProductType(request.getProductType())
                 .setSystemPrompt(systemPrompt)
+                .setContentPrompt(contentPrompt)
                 .setMessageContextSize(request.getMessageContextSize())
-                .setOpenaiRequestBody(requestBody);
+                .setOpenaiRequestBody(requestBody)
+                .setVariables(request.getVariables())
+                ;
         super.save(userFriend);
         // 4、删除缓存
-        this.deleteCache(request.getProductType(), user);
+        this.deleteFriendListCache(request.getProductType(), user);
 
         // 5、返回这个新的好友视图
         return FriendVo.of(friend, userFriend);
@@ -227,8 +240,7 @@ public class UserFriendServiceImpl extends ServiceImpl<UserFriendMapper, UserFri
             friendService.deleteCacheByRoleType(friend.getRoleType());
         }
 
-        exists
-                .setAvatar(request.getAvatar())
+        exists.setAvatar(request.getAvatar())
                 .setName(request.getName())
                 .setVoiceChat(request.getVoiceChat())
                 .setWelcome(request.getWelcome())
@@ -236,14 +248,17 @@ public class UserFriendServiceImpl extends ServiceImpl<UserFriendMapper, UserFri
                 .setCssAvatar(request.getCssAvatar())
                 .setTag(request.getTag())
                 .setSystemPrompt(request.getSystemPrompt())
+                .setContentPrompt(request.getContentPrompt())
                 .setMessageContextSize(request.getMessageContextSize())
                 .setOpenaiRequestBody(JsonHelper.convert(request.getOpenaiRequestBody()))
+                .setVariables(request.getVariables())
                 .setModifyTime(LocalDateTime.now())
-                ;
+        ;
 
         updateById(exists);
 
-        this.deleteCache(exists.getProductType(), user);
+        this.deleteFriendListCache(exists.getProductType(), user);
+        this.deleteFriendCache(userId, exists.getProductType(), exists.getRoleType());
 
         return FriendVo.of(friend, exists);
     }
@@ -259,13 +274,13 @@ public class UserFriendServiceImpl extends ServiceImpl<UserFriendMapper, UserFri
         }
         exists.setIsSupportMemory(request.getIsSupportMemory());
         updateById(exists);
-        this.deleteCache(exists.getProductType(), user);
+        this.deleteFriendListCache(exists.getProductType(), user);
         Friend friend = friendService.getById(exists.getFriendId());
         return FriendVo.of(friend, exists);
     }
 
     @Override
-    public void deleteCache(Integer productType, User user) {
+    public void deleteFriendListCache(Integer productType, User user) {
         updater.remove(RedisKeys.AboutFriend.stringFriendList(productType, user));
     }
 
@@ -345,13 +360,15 @@ public class UserFriendServiceImpl extends ServiceImpl<UserFriendMapper, UserFri
                     .setWelcome(vo.getWelcome())
                     .setIntro(vo.getIntro())
                     .setCssAvatar(vo.getCssAvatar())
-                    .setTag(vo.getTag());
+                    .setTag(vo.getTag())
+                    .setVariables(vo.getVariables());
             userFriend.setUserId(user.getId());
             userFriend.setProductType(productType);
             PromptConfig promptConfig = promptConfigService.getOne(userFriend.getRoleType());
             if (Objects.nonNull(promptConfig)) {
                 userFriend.setMessageContextSize(promptConfig.getMessageContextSize());
                 userFriend.setSystemPrompt(promptConfig.getSystemPrompt());
+                userFriend.setContentPrompt(promptConfig.getContentPrompt());
                 String json = promptConfig.getOpenaiRequestBody();
                 if (StringUtils.isNotBlank(json)) {
                     userFriend.setOpenaiRequestBody(json);

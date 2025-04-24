@@ -23,6 +23,7 @@
         class="tp_select"
         v-model:value="formData.friendType"
         :options="friendTypeOptions"
+        :disabled="formData.userFriendId"
       />
     </n-form-item>
     <n-form-item label="标签" path="tag">
@@ -56,7 +57,7 @@
         <div class="desc">建立新话题页面所展示的招呼</div>
       </div>
     </n-form-item>
-    <n-form-item label="指令" path="systemPrompt" v-if="formData.friendType === 1">
+    <n-form-item label="指令" path="systemPrompt">
       <div class="item_contet">
         <n-input
           class="_input"
@@ -68,9 +69,10 @@
           placeholder=""
         />
         <div class="desc">
-          设置这个AI的系统指令（角色描述），通过
+          <div>设置这个AI的系统指令（角色描述），通过
           <span class="model_look" @click="modelLook">「这里」</span>
-          可以获取一些帮助
+          可以获取一些帮助</div>
+          <div>当AI类型是阿里云百炼应用时，设置该指令将会覆盖应用已经配置的提示词。</div>
         </div>
       </div>
     </n-form-item>
@@ -101,8 +103,8 @@
     </n-form-item>
 
     <!-- <n-form-item label="模型设置" /> -->
-    <div class="diver" v-if="formData.friendType === 1">模型设置</div>
-    <div v-if="formData.friendType === 1">
+    <div class="diver">模型设置</div>
+    <div>
       <n-form-item class="modelSet" path="messageContextSize">
         <template v-slot:label>
           <span>{{ config.messageContextSize.label }}</span>
@@ -122,7 +124,7 @@
           ></n-input>
         </div>
       </n-form-item>
-      <n-form-item class="modelSet" path="openaiRequestBody.maxTokens">
+      <n-form-item class="modelSet" path="openaiRequestBody.maxTokens" v-if="formData.friendType === 1">
         <template v-slot:label>
           <span>{{ config.openaiRequestBody.maxTokens.label }}</span>
           <Popover :text="config.openaiRequestBody.maxTokens.popover" />
@@ -141,7 +143,7 @@
           ></n-input>
         </div>
       </n-form-item>
-      <n-form-item class="modelSet" path="openaiRequestBody.temperature">
+      <n-form-item class="modelSet" path="openaiRequestBody.temperature" v-if="formData.friendType === 1">
         <template v-slot:label>
           <span>{{ config.openaiRequestBody.temperature.label }}</span>
           <Popover :text="config.openaiRequestBody.temperature.popover" />
@@ -161,7 +163,7 @@
           ></n-input>
         </div>
       </n-form-item>
-      <n-form-item class="modelSet" path="openaiRequestBody.topP">
+      <n-form-item class="modelSet" path="openaiRequestBody.topP" v-if="formData.friendType === 1">
         <template v-slot:label>
           <span>{{ config.openaiRequestBody.topP.label }}</span>
           <Popover :text="config.openaiRequestBody.topP.popover" />
@@ -181,7 +183,7 @@
           ></n-input>
         </div>
       </n-form-item>
-      <n-form-item class="modelSet" path="openaiRequestBody.presencePenalty">
+      <n-form-item class="modelSet" path="openaiRequestBody.presencePenalty" v-if="formData.friendType === 1">
         <template v-slot:label>
           <span>{{ config.openaiRequestBody.presencePenalty.label }}</span>
           <Popover :text="config.openaiRequestBody.presencePenalty.popover" />
@@ -200,7 +202,7 @@
           ></n-input>
         </div>
       </n-form-item>
-      <n-form-item class="modelSet" path="openaiRequestBody.frequencyPenalty">
+      <n-form-item class="modelSet" path="openaiRequestBody.frequencyPenalty" v-if="formData.friendType === 1">
         <template v-slot:label>
           <span>{{ config.openaiRequestBody.frequencyPenalty.label }}</span>
           <Popover :text="config.openaiRequestBody.frequencyPenalty.popover" />
@@ -238,6 +240,7 @@
         </div>
       </div>
     </n-form-item>
+    
     <div class="diver" v-if="formData.friendType === 3">阿里云百炼设置</div>
     <div v-if="formData.friendType === 3">
       <n-form-item label="业务空间ID" path="aliyunDashscopeWorkspaceId">
@@ -274,6 +277,40 @@
             placeholder=""
           />
           <div class="desc">填写阿里云百炼应用调用的密钥，如果不填则使用系统全局配置的。</div>
+        </div>
+      </n-form-item>
+      <n-form-item label="自定义变量" path="variables">
+        <div class="item_contet">
+          <div class="rowInput" v-for="(variable, i) in variableList" :key="variable">
+            <n-input
+              :key="i"
+              v-model:value="variable.name"
+              @input="variableChange($event, i)"
+              class="_input variable_name"
+              maxlength="50"
+              show-count
+              placeholder="变量名"
+            />
+            <n-input
+              :key="i"
+              type="textarea"
+              v-model:value="variable.value"
+              @input="variableChange($event, i)"
+              class="_input variable_value"
+              rows="1"
+              maxlength="1000"
+              show-count
+              placeholder="变量值"
+            />
+            <div class="close">
+              <n-button class="_close_btn" @click="closeVariable(i)">
+                <span class="iconfont icon-close"> </span>
+              </n-button>
+            </div>
+          </div>
+          <n-button class="_close_btn _add_var_btn" @click="addVariable" v-if="variableList.length < 10">
+            添加一个变量
+          </n-button>
         </div>
       </n-form-item>
     </div>
@@ -326,6 +363,21 @@ const friendTypeOptions = [
 ];
 
 const stars = ref([{ text: "" }]);
+const variableList = ref([{  }]);
+
+// 初始化variables数据
+const initVariables = () => {
+  try {
+    const vars = JSON.parse(formData.value.variables || "{}");
+    variableList.value = Object.entries(vars).map(([name, value]) => ({ name, value })) || [];
+  } catch (e) {
+    console.error('解析variables失败:', e);
+    variableList.value = [];
+  }
+};
+
+// 监听formData变化，初始化variables
+watch(() => formData.value.variables, initVariables, { immediate: true });
 
 // 监听friendType变化，当从3变为其他值时，清空阿里云相关字段
 // watch(
@@ -338,6 +390,36 @@ const stars = ref([{ text: "" }]);
 //     }
 //   }
 // );
+
+const variableChange = (value, index) => {
+};
+
+const closeVariable = (i) => {
+  console.log("closeVariable", i);
+  variableList.value.splice(i, 1);
+};
+
+const addVariable = () => {
+  if (variableList.value.length >= 10) {
+    message.warning("最多添加10个变量");
+    return;
+  }
+  variableList.value.push({ name: "", value: "" });
+};
+
+// 在提交时处理变量数据转换
+
+const updateVariables = () => {
+  try {
+    const variables = JSON.parse(formData.value.variables || "[]");
+    variableList.value = Object.entries(variables).map(([name, value]) => ({
+      name,
+      value,
+    }));
+  } catch (error) {
+    variableList.value = [];
+  }
+};
 
 const cStartChange = (e, i) => {
   const len = stars.value.length;
@@ -414,6 +496,15 @@ const confirm = async () => {
   if (!formRef.value || isClick) return;
   isClick = true;
 
+  // 处理变量数据转换
+  if (Array.isArray(variableList.value)) {
+    const validVariables = variableList.value
+      .filter(item => item && typeof item === 'object' && item.name && item.value)
+      .filter(({ name, value }) => name.trim() && value.trim())
+      .map(({ name, value }) => [name.trim(), value.trim()]);
+    formData.value.variables = JSON.stringify(Object.fromEntries(validVariables));
+  }
+
   const errors = await new Promise((c) => formRef.value.validate(c));
   if (errors) {
     return over();
@@ -421,7 +512,10 @@ const confirm = async () => {
   emit("confirm", over);
 };
 
-onMounted(() => update());
+onMounted(() => {
+  update();
+  updateVariables();
+});
 defineExpose({ update });
 </script>
 
@@ -465,6 +559,18 @@ defineExpose({ update });
       ._close_btn {
         width: 40px;
       }
+      .variable_name {
+        width: 200px;
+        margin-right: 10px;
+      }
+      .variable_value {
+        flex: 1;
+        margin-right: 10px;
+      }
+    }
+
+    ._add_var_btn {
+      margin-top: 10px;
     }
   }
 

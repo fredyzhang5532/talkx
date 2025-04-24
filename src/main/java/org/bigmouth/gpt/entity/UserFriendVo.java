@@ -90,6 +90,8 @@ public class UserFriendVo {
      */
     private String systemPrompt;
 
+    private String contentPrompt;
+
     /**
      * 上下文数量
      */
@@ -130,6 +132,11 @@ public class UserFriendVo {
      */
     private String aliyunDashscopeApiKey;
 
+    /**
+     * 变量
+     */
+    private String variables;
+
     public static UserFriendVo of(Friend friend, UserFriend o) {
         return new UserFriendVo()
                 .setFriendId(o.getFriendId())
@@ -148,6 +155,7 @@ public class UserFriendVo {
                 .setCssAvatar(o.getCssAvatar())
                 .setTag(o.getTag())
                 .setSystemPrompt(o.getSystemPrompt())
+                .setContentPrompt(o.getContentPrompt())
                 .setMessageContextSize(o.getMessageContextSize())
                 .setOpenaiRequestBody(JsonHelper.convert(o.getOpenaiRequestBody(), FriendCreateModelConfig.class))
                 .setConversationStart(friend.getConversactionStartSet())
@@ -156,6 +164,7 @@ public class UserFriendVo {
                 .setAliyunDashscopeWorkspaceId(friend.getAliyunDashscopeWorkspaceId())
                 .setAliyunDashscopeAppId(friend.getAliyunDashscopeAppId())
                 .setAliyunDashscopeApiKey(friend.getAliyunDashscopeApiKey())
+                .setVariables(o.getVariables())
                 ;
     }
 }

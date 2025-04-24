@@ -64,6 +64,7 @@ const getData = async () => {
     friendId: friendId.value,
   });
   const {
+    userFriendId,
     avatar,
     cssAvatar,
     name,
@@ -78,12 +79,14 @@ const getData = async () => {
     aliyunDashscopeWorkspaceId,
     aliyunDashscopeAppId,
     aliyunDashscopeApiKey,
+    variables,
     messageContextSize = defaultFormData.messageContextSize,
     openaiRequestBody = JSON.parse(
       JSON.stringify(defaultFormData.openaiRequestBody)
     ),
   } = friendData;
   formData.value = {
+    userFriendId,
     avatar,
     cssAvatar,
     name,
@@ -98,6 +101,7 @@ const getData = async () => {
     aliyunDashscopeWorkspaceId,
     aliyunDashscopeAppId,
     aliyunDashscopeApiKey,
+    variables,
     messageContextSize: Number(messageContextSize),
     openaiRequestBody,
   };

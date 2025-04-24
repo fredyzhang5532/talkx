@@ -11,6 +11,7 @@ export const SourceType = {
 }
 
 export const defaultFormData = {
+    userFriendId: 0,
     avatar: default_friend_avatar,
     cssAvatar: "",
     name: "",
@@ -26,6 +27,7 @@ export const defaultFormData = {
     aliyunDashscopeWorkspaceId: "",
     aliyunDashscopeAppId: "",
     aliyunDashscopeApiKey: "",
+    variables: "",
     openaiRequestBody: {
         maxTokens: 1000,
         temperature: 1.0,

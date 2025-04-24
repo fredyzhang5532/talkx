@@ -66,6 +66,8 @@ public class FriendCreateRequest {
      */
     private String systemPrompt;
 
+    private String contentPrompt;
+
     /**
      * 上下文数量
      */
@@ -95,4 +97,9 @@ public class FriendCreateRequest {
      * 阿里云百炼应用密钥
      */
     private String aliyunDashscopeApiKey;
+
+    /**
+     * 自定义变量定义，一般用于阿里云百炼等平台调用时的传参，默认是一个JSON格式的数据。
+     */
+    private String variables;
 }

@@ -7,12 +7,12 @@ import java.io.IOException;
  * @date 2023/5/8
  * @since 1.0.0
  */
-public interface Handler2<T> {
+public interface ByteWriter<T> {
 
     /**
      * 执行
      *
      * @throws IOException 异常
      */
-    void handle(T bytes) throws IOException;
+    void write(T bytes) throws IOException;
 }

@@ -6,7 +6,7 @@
 
     <groupId>org.bigmouth.gpt</groupId>
     <artifactId>talkx</artifactId>
-    <version>0.0.8</version>
+    <version>0.0.9</version>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -257,6 +257,21 @@
             <groupId>com.dtflys.forest</groupId>
             <artifactId>forest-spring-boot-starter</artifactId>
             <version>1.6.4</version>
+        </dependency>
+
+        <!-- alioss -->
+        <!-- https://mvnrepository.com/artifact/com.aliyun.oss/aliyun-sdk-oss -->
+        <dependency>
+            <groupId>com.aliyun.oss</groupId>
+            <artifactId>aliyun-sdk-oss</artifactId>
+            <version>2.4.0</version>
+        </dependency>
+
+        <!-- velocity -->
+        <dependency>
+            <groupId>org.apache.velocity</groupId>
+            <artifactId>velocity-engine-core</artifactId>
+            <version>2.3</version>
         </dependency>
 
         <!-- micrometer -->

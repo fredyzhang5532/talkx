@@ -10,6 +10,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.http.conn.ConnectionPoolTimeoutException;
 import org.bigmouth.gpt.ApplicationConfig;
 import org.bigmouth.gpt.ai.entity.*;
+import org.bigmouth.gpt.ai.prompt.SystemPromptParser;
+import org.bigmouth.gpt.ai.prompt.SystemPromptParserFactory;
+import org.bigmouth.gpt.ai.prompt.UserPromptParser;
+import org.bigmouth.gpt.ai.prompt.UserPromptParserFactory;
 import org.bigmouth.gpt.entity.*;
 import org.bigmouth.gpt.event.ChatRetryEvent;
 import org.bigmouth.gpt.exceptions.AiAccountException;
@@ -27,8 +31,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.util.CollectionUtils;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
@@ -55,10 +57,12 @@ public class ChatServiceFactory implements BeanPostProcessor {
     private final ITableSchemaService tableSchemaService;
     private final IFriendPermissionService friendPermissionService;
     private final EventPark eventPark;
+    private final SystemPromptParserFactory systemPromptParserFactory;
+    private final UserPromptParserFactory userPromptParserFactory;
     private final ConcurrentMap<Integer, List<ChatService>> chatServiceMap = Maps.newConcurrentMap();
 
     public ChatServiceFactory(ApplicationConfig applicationConfig, Fetcher fetcher, IAiModelService aiModelService, IFriendService friendService, PromptService promptService,
-                              AccessKeyService accessKeyService, IUserService userService, ITableSchemaService tableSchemaService, IFriendPermissionService friendPermissionService, EventPark eventPark) {
+                              AccessKeyService accessKeyService, IUserService userService, ITableSchemaService tableSchemaService, IFriendPermissionService friendPermissionService, EventPark eventPark, SystemPromptParserFactory systemPromptParserFactory, UserPromptParserFactory userPromptParserFactory) {
         this.applicationConfig = applicationConfig;
         this.fetcher = fetcher;
         this.aiModelService = aiModelService;
@@ -69,6 +73,8 @@ public class ChatServiceFactory implements BeanPostProcessor {
         this.tableSchemaService = tableSchemaService;
         this.friendPermissionService = friendPermissionService;
         this.eventPark = eventPark;
+        this.systemPromptParserFactory = systemPromptParserFactory;
+        this.userPromptParserFactory = userPromptParserFactory;
     }
 
     @Override
@@ -208,10 +214,22 @@ public class ChatServiceFactory implements BeanPostProcessor {
         }
 
         // replace macro with system
-        this.replaceSystemPromptMacros(prompt);
+        SystemPromptParser systemPromptParser = Optional.ofNullable(systemPromptParserFactory.getByRoleType(prompt.getRoleType()))
+                .orElseGet(systemPromptParserFactory::getVelocitySystemPromptParser);
+        systemPromptParser.parse(user, prompt);
+
+        // replace user prompt
+        UserPromptParser userPromptParser = Optional.ofNullable(userPromptParserFactory.getByRoleType(prompt.getRoleType()))
+                .orElseGet(userPromptParserFactory::getVelocityMergedUserPromptParser);
+        List<Message> messages = chatRequest.getMessages();
+        Message last = messages.get(messages.size() - 1);
+        String userPrompt = last.getContent();
+        userPromptParser.parser(user, prompt, messages);
+
         // replace api parameter, example: o1
         this.replaceApiParameterForModel(aiModel.getModelName(), prompt);
-        // replace macro with content
+
+        // replace sql role with content
         this.replaceContentForMacro(chatRequest, prompt, tableSchema);
 
         int retry = 0;
@@ -263,15 +281,6 @@ public class ChatServiceFactory implements BeanPostProcessor {
         }
     }
 
-    private void replaceSystemPromptMacros(Prompt prompt) {
-        String systemPrompt = prompt.getSystemPrompt();
-        if (StringUtils.isBlank(systemPrompt)) {
-            return;
-        }
-        systemPrompt = systemPrompt.replaceAll("__DATE__", LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
-        prompt.setSystemPrompt(systemPrompt);
-    }
-
     private void replaceApiParameterForModel(String model, Prompt prompt) {
         if (StringUtils.startsWith(model, "o1")) {
             // Currently unsupported API parameters: temperature, top_p, presence_penalty, frequency_penalty, logprobs, top_logprobs, logit_bias
@@ -305,18 +314,9 @@ public class ChatServiceFactory implements BeanPostProcessor {
 
         Message last = messages.get(messages.size() - 1);
         String content = last.getContent();
-        // 替换内容提示词
 
         // 固定宏
         contentPrompt = replaceTableMetadata(contentPrompt, tableSchema);
-
-        // 动态宏
-        String macro = prompt.getMacro();
-        if (StringUtils.isBlank(macro)) {
-            return;
-        }
-
-        contentPrompt = contentPrompt.replaceAll(Pattern.quote(macro), content);
 
         last.setContent(contentPrompt);
 

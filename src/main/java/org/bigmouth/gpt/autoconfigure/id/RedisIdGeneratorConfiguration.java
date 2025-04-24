@@ -41,4 +41,9 @@ public class RedisIdGeneratorConfiguration {
     public IdGenerator redisIdGenerator(JedisPool jedisPool) {
         return new RedisIdGenerator(jedisPool);
     }
+
+    @Bean(name = "orderIdGenerator")
+    public IdGenerator orderIdGenerator(JedisPool jedisPool) {
+        return new RedisIdGenerator(22, "cn.talkx.order.id", null, jedisPool);
+    }
 }

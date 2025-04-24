@@ -123,6 +123,11 @@ public class Friend implements Serializable {
      */
     private String aliyunDashscopeApiKey;
 
+    /**
+     * 自定义变量定义，一般用于阿里云百炼等平台调用时的传参，默认是一个JSON格式的数据。
+     */
+    private String variables;
+
     private LocalDateTime createTime;
 
     private LocalDateTime modifyTime;
@@ -171,6 +176,8 @@ public class Friend implements Serializable {
     public static final String aliyun_dashscope_app_id = "aliyun_dashscope_app_id";
 
     public static final String aliyun_dashscope_api_key = "aliyun_dashscope_api_key";
+
+    public static final String VARIABLES = "variables";
 
     public static final String CREATE_TIME = "create_time";
 
