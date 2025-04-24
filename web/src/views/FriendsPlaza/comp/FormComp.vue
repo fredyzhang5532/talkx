@@ -243,7 +243,7 @@
     
     <div class="diver" v-if="formData.friendType === 3">阿里云百炼设置</div>
     <div v-if="formData.friendType === 3">
-      <n-form-item label="业务空间ID" path="aliyunDashscopeWorkspaceId">
+      <n-form-item label="业务空间ID" path="aliyunDashscopeWorkspaceId" v-if="formData.friendSource === SourceType.created">
         <div class="item_contet">
           <n-input
             class="_input"
@@ -255,7 +255,7 @@
           <div class="desc">填写阿里云百炼空间ID</div>
         </div>
       </n-form-item>
-      <n-form-item label="应用ID" path="aliyunDashscopeAppId">
+      <n-form-item label="应用ID" path="aliyunDashscopeAppId" v-if="formData.friendSource === SourceType.created">
         <div class="item_contet">
           <n-input
             class="_input"
@@ -267,7 +267,7 @@
           <div class="desc">填写阿里云百炼应用ID</div>
         </div>
       </n-form-item>
-      <n-form-item label="调用密钥" path="aliyunDashscopeApiKey">
+      <n-form-item label="调用密钥" path="aliyunDashscopeApiKey" v-if="formData.friendSource === SourceType.created">
         <div class="item_contet">
           <n-input
             class="_input"
