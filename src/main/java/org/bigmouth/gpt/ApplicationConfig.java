@@ -128,6 +128,11 @@ public class ApplicationConfig {
      */
     private String aliyunDashscopeApiKey = "";
 
+    /**
+     * 扣子CN AccessToken
+     */
+    private String cozeCnAccessToken = "";
+
     @Data
     public static class CustomModel {
         private Set<Long> userIds = Sets.newHashSet();

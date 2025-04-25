@@ -5,7 +5,6 @@ import com.alibaba.dashscope.common.ImageURL;
 import com.alibaba.dashscope.common.MessageContentBase;
 import com.alibaba.dashscope.common.MessageContentImageURL;
 import com.alibaba.dashscope.common.MessageContentText;
-import com.alibaba.dashscope.utils.JsonUtils;
 import com.bxm.warcar.integration.eventbus.EventPark;
 import com.bxm.warcar.utils.StringHelper;
 import com.google.common.collect.Lists;
@@ -32,7 +31,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -85,7 +83,7 @@ public class AliyunDashscopeAppChatServiceImpl implements ChatService {
 
         try {
             String variables = prompt.getVariables();
-            JsonObject jsonObject = StringUtils.isBlank(variables) ? new JsonObject() : JsonUtils.parse(variables);
+            JsonObject jsonObject = CozeCnChatServiceImpl.convert2JsonObject(variables);
 
             ApplicationParam param = ApplicationParam.builder()
                     .apiKey(Optional.ofNullable(friend.getAliyunDashscopeApiKey()).filter(StringUtils::isNotBlank).orElse(applicationConfig.getAliyunDashscopeApiKey()))

@@ -128,6 +128,16 @@ public class FriendVo {
     private String aliyunDashscopeApiKey;
 
     /**
+     * Coze 智能体ID
+     */
+    private String cozeBotId;
+
+    /**
+     * Coze 智能体访问令牌
+     */
+    private String cozeAccessKey;
+
+    /**
      * 自定义变量定义，一般用于阿里云百炼等平台调用时的传参，默认是一个JSON格式的数据。
      */
     private String variables;
@@ -186,6 +196,9 @@ public class FriendVo {
         vo.setAliyunDashscopeWorkspaceId(friend.getAliyunDashscopeWorkspaceId())
                 .setAliyunDashscopeAppId(friend.getAliyunDashscopeAppId())
                 .setAliyunDashscopeApiKey(friend.getAliyunDashscopeApiKey());
+
+        vo.setCozeAccessKey(friend.getCozeAccessKey())
+                .setCozeBotId(friend.getCozeBotId());
 
         vo.setVariables(friend.getVariables());
     }

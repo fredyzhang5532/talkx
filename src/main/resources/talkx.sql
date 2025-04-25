@@ -517,3 +517,8 @@ alter table `friend` add column aliyun_dashscope_api_key varchar(64) DEFAULT NUL
 -- v0.1.0
 alter table `friend` add column variables text default null comment '自定义变量定义，一般用于阿里云百炼等平台调用时的传参，默认是一个JSON格式的数据。' after `aliyun_dashscope_api_key`;
 alter table `user_friend` add column variables text default null comment '自定义变量定义，一般用于阿里云百炼等平台调用时的传参，默认是一个JSON格式的数据。' after `openai_request_body`;
+
+-- v0.1.1
+alter table `friend` add column coze_bot_id varchar(64) default null comment 'Coze 智能体ID' after `aliyun_dashscope_api_key`;
+alter table `friend` add column coze_access_token varchar(128) default null comment 'Coze 智能体访问令牌' after `coze_cn_bot_id`;
+

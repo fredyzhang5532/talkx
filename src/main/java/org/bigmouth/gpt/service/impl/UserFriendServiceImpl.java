@@ -190,6 +190,8 @@ public class UserFriendServiceImpl extends ServiceImpl<UserFriendMapper, UserFri
                 .setAliyunDashscopeWorkspaceId(request.getAliyunDashscopeWorkspaceId())
                 .setAliyunDashscopeAppId(request.getAliyunDashscopeAppId())
                 .setAliyunDashscopeApiKey(request.getAliyunDashscopeApiKey())
+                .setCozeBotId(request.getCozeBotId())
+                .setCozeAccessKey(request.getCozeAccessKey())
                 .setVariables(request.getVariables())
                 ;
         friendService.save(friend);
@@ -236,6 +238,8 @@ public class UserFriendServiceImpl extends ServiceImpl<UserFriendMapper, UserFri
             friend.setAliyunDashscopeWorkspaceId(request.getAliyunDashscopeWorkspaceId());
             friend.setAliyunDashscopeAppId(request.getAliyunDashscopeAppId());
             friend.setAliyunDashscopeApiKey(request.getAliyunDashscopeApiKey());
+            friend.setCozeBotId(request.getCozeBotId());
+            friend.setCozeAccessKey(request.getCozeAccessKey());
             friend.setConversactionStart(Optional.ofNullable(request.getConversationStart()).map(strings -> StringUtils.join(strings, ",")).orElse(null));
             friend.setModifyTime(LocalDateTime.now());
             friendService.updateById(friend);

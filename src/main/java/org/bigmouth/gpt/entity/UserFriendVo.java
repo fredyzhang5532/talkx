@@ -133,6 +133,16 @@ public class UserFriendVo {
     private String aliyunDashscopeApiKey;
 
     /**
+     * Coze 智能体ID
+     */
+    private String cozeBotId;
+
+    /**
+     * Coze 智能体访问令牌
+     */
+    private String cozeAccessKey;
+
+    /**
      * 变量
      */
     private String variables;
@@ -164,6 +174,8 @@ public class UserFriendVo {
                 .setAliyunDashscopeWorkspaceId(friend.getAliyunDashscopeWorkspaceId())
                 .setAliyunDashscopeAppId(friend.getAliyunDashscopeAppId())
                 .setAliyunDashscopeApiKey(friend.getAliyunDashscopeApiKey())
+                .setCozeBotId(friend.getCozeBotId())
+                .setCozeAccessKey(friend.getCozeAccessKey())
                 .setVariables(o.getVariables())
                 ;
     }

@@ -1,4 +1,4 @@
-package org.bigmouth.gpt;
+package org.bigmouth.gpt.test;
 
 import org.springframework.web.util.UriComponentsBuilder;
 

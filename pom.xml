@@ -20,6 +20,7 @@
         <mybatis_plus_version>3.4.0</mybatis_plus_version>
         <mapstruct_version>1.4.2.Final</mapstruct_version>
         <openai4j_version>0.22.91</openai4j_version>
+        <coze_version>0.3.0</coze_version>
     </properties>
 
     <dependencyManagement>
@@ -235,6 +236,13 @@
             <groupId>org.gagravarr</groupId>
             <artifactId>vorbis-java-core</artifactId>
             <version>0.8</version>
+        </dependency>
+
+        <!-- coze -->
+        <dependency>
+            <groupId>com.coze</groupId>
+            <artifactId>coze-api</artifactId>
+            <version>${coze_version}</version>
         </dependency>
 
         <!-- about VAD -->

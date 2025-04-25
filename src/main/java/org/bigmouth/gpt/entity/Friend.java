@@ -124,6 +124,16 @@ public class Friend implements Serializable {
     private String aliyunDashscopeApiKey;
 
     /**
+     * Coze 智能体ID
+     */
+    private String cozeBotId;
+
+    /**
+     * Coze 智能体访问令牌
+     */
+    private String cozeAccessKey;
+
+    /**
      * 自定义变量定义，一般用于阿里云百炼等平台调用时的传参，默认是一个JSON格式的数据。
      */
     private String variables;
@@ -173,9 +183,13 @@ public class Friend implements Serializable {
 
     public static final String ALIYUN_DASHSCOPE_WORKSPACE_ID = "aliyun_dashscope_workspace_id";
 
-    public static final String aliyun_dashscope_app_id = "aliyun_dashscope_app_id";
+    public static final String ALIYUN_DASHSCOPE_APP_ID = "aliyun_dashscope_app_id";
 
-    public static final String aliyun_dashscope_api_key = "aliyun_dashscope_api_key";
+    public static final String ALIYUN_DASHSCOPE_API_KEY = "aliyun_dashscope_api_key";
+
+    public static final String COZE_BOT_ID = "coze_bot_id";
+
+    public static final String COZE_ACCESS_KEY = "coze_access_key";
 
     public static final String VARIABLES = "variables";
 

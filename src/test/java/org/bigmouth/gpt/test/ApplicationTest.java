@@ -1,5 +1,6 @@
-package org.bigmouth.gpt;
+package org.bigmouth.gpt.test;
 
+import org.bigmouth.gpt.Application;
 import org.bigmouth.gpt.entity.AiModel;
 
 public class ApplicationTest {

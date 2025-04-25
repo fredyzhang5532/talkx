@@ -99,6 +99,16 @@ public class FriendCreateRequest {
     private String aliyunDashscopeApiKey;
 
     /**
+     * Coze 智能体ID
+     */
+    private String cozeBotId;
+
+    /**
+     * Coze 智能体访问令牌
+     */
+    private String cozeAccessKey;
+
+    /**
      * 自定义变量定义，一般用于阿里云百炼等平台调用时的传参，默认是一个JSON格式的数据。
      */
     private String variables;
