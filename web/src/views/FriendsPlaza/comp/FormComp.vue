@@ -393,8 +393,8 @@ const friendTypeOptions = [
   { label: "简单对话", value: 1 },
   { label: "GPTs (已过时)", value: 2, disabled: true },
   { label: "阿里云百炼应用", value: 3 },
-  { label: "Coze.cn", value: 4 },
-  { label: "Coze.com", value: 5 },
+  { label: "扣子（🇨🇳 中国）", value: 4 },
+  { label: "扣子（🌏 全球）", value: 5 },
 ];
 
 const stars = ref([{ text: "" }]);

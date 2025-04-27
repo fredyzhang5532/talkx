@@ -37,7 +37,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static com.coze.openapi.service.config.Consts.COZE_CN_BASE_URL;
@@ -139,13 +138,6 @@ public class CozeChatServiceImpl implements ChatService {
                                         flushRunnable.execute();
                                     }
                                 }
-                            } else if (ChatEventType.CONVERSATION_MESSAGE_COMPLETED.equals(event)) {
-                                log.info("coze chat completed, {}", Optional.ofNullable(chatEvent.getChat()).map(new Function<Chat, Object>() {
-                                    @Override
-                                    public Object apply(Chat chat) {
-                                        return chat.getUsage();
-                                    }
-                                }));
                             } else if (ChatEventType.CONVERSATION_CHAT_COMPLETED.equals(event)) {
                                 Chat chat = chatEvent.getChat();
                                 ChatUsage chatUsage = chat.getUsage();

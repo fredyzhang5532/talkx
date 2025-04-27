@@ -22,6 +22,9 @@
     <div class="badge" v-if="props.data.friendType == 3">
       <div class="text">百炼应用</div>
     </div>
+    <div class="badge" v-if="props.data.friendType == 4 || props.data.friendType == 5">
+      <div class="text">扣子应用</div>
+    </div>
   </div>
 </template>
 
