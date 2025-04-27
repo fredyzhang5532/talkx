@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -15,6 +16,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Function;
 
 /**
@@ -45,7 +47,7 @@ public class Friend implements Serializable {
     private String roleType;
 
     /**
-     * AI 类型。1 普通、2 GPTs、3 阿里云百炼应用
+     * AI 类型。1 普通、2 GPTs、3 阿里云百炼应用、4 COZE中国、5 COZE全球
      */
     private Integer friendType;
 
@@ -131,7 +133,7 @@ public class Friend implements Serializable {
     /**
      * Coze 智能体访问令牌
      */
-    private String cozeAccessKey;
+    private String cozeAccessToken;
 
     /**
      * 自定义变量定义，一般用于阿里云百炼等平台调用时的传参，默认是一个JSON格式的数据。
@@ -189,7 +191,7 @@ public class Friend implements Serializable {
 
     public static final String COZE_BOT_ID = "coze_bot_id";
 
-    public static final String COZE_ACCESS_KEY = "coze_access_key";
+    public static final String COZE_ACCESS_TOKEN = "coze_access_token";
 
     public static final String VARIABLES = "variables";
 
@@ -199,21 +201,37 @@ public class Friend implements Serializable {
 
     public static final String DELETED = "deleted";
 
+    public static final Set<Integer> AGENT_FRIEND_TYPE_SET = Sets.newHashSet(
+            Constants.Friend.FRIEND_TYPE_ALIYUN_DASHSCOPE_APP,
+            Constants.Friend.COZE_CN,
+            Constants.Friend.COZE_COM
+    );
+
     public List<String> getConversactionStartSet() {
         return Optional.ofNullable(getConversactionStart())
                 .map((Function<String, List<String>>) s -> Lists.newArrayList(StringUtils.split(s, ",")))
                 .orElse(null);
     }
 
-    public boolean isAliyunDashscopeFriend() {
-        return Objects.equals(getFriendType(), Constants.Friend.FRIEND_TYPE_ALIYUN_DASHSCOPE_APP);
+    public boolean isAgentFriend() {
+        return AGENT_FRIEND_TYPE_SET.contains(getFriendType());
     }
 
-    /**
-     * @return
-     * {aliyunDashscopeWorkspaceId}${aliyunDashscopeAppId}
-     */
-    public String getSpecialModelNameOfAliyunDashscope() {
-        return Optional.ofNullable(getAliyunDashscopeWorkspaceId()).orElse(StringUtils.EMPTY) + "$" + getAliyunDashscopeAppId();
+    public String getAgentSpecialModelName() {
+        if (Objects.equals(getFriendType(), Constants.Friend.COZE_CN) || Objects.equals(getFriendType(), Constants.Friend.COZE_COM)) {
+            return getCozeBotId();
+        } else if (Objects.equals(getFriendType(), Constants.Friend.FRIEND_TYPE_ALIYUN_DASHSCOPE_APP)) {
+            return Optional.ofNullable(getAliyunDashscopeWorkspaceId()).orElse(StringUtils.EMPTY) + "$" + getAliyunDashscopeAppId();
+        }
+        return getFriendType() + "" + getId();
+    }
+
+    public Integer getAgentImplementAiPlatformType() {
+        if (Objects.equals(getFriendType(), Constants.Friend.COZE_CN) || Objects.equals(getFriendType(), Constants.Friend.COZE_COM)) {
+            return Constants.AiPlatform.PLATFORM_TYPE_COZE;
+        } else if (Objects.equals(getFriendType(), Constants.Friend.FRIEND_TYPE_ALIYUN_DASHSCOPE_APP)) {
+            return Constants.AiPlatform.PLATFORM_TYPE_ALIYUN_DASHSCOPE;
+        }
+        return Constants.AiPlatform.PLATFORM_TYPE_OPENAI;
     }
 }

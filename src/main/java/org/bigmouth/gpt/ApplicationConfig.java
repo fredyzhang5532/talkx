@@ -133,6 +133,11 @@ public class ApplicationConfig {
      */
     private String cozeCnAccessToken = "";
 
+    /**
+     * 扣子COM AccessToken
+     */
+    private String cozeComAccessToken = "";
+
     @Data
     public static class CustomModel {
         private Set<Long> userIds = Sets.newHashSet();

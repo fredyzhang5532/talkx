@@ -79,11 +79,7 @@ public interface Constants {
         /**
          * 扣子
          */
-        int PLATFORM_TYPE_COZE_CN = 3;
-        /**
-         * 扣子全球
-         */
-        int PLATFORM_TYPE_COZE_COM = 4;
+        int PLATFORM_TYPE_COZE = 3;
 
         int MODEL_GROUP_GPT3_5 = 1;
         int MODEL_GROUP_GPT4 = 2;
@@ -225,5 +221,8 @@ public interface Constants {
          * 阿里云百炼应用
          */
         int FRIEND_TYPE_ALIYUN_DASHSCOPE_APP = 3;
+        int COZE_CN = 4;
+        int COZE_COM = 5;
+
     }
 }

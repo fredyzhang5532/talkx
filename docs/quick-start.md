@@ -19,7 +19,7 @@
 
 > 然后直接复制一份配置文件 [default.application.yml](..%2Fsrc%2Fmain%2Fconf%2Fdefault.application.yml) 然后重命名为 application.yml，按下图所示修改配置。
 
-![iShot_2025-03-18_19.19.18.png](other%2FiShot_2025-03-18_19.19.18.png)
+![iShot_2025-03-18_19.19.18.png](..%2Fother%2FiShot_2025-03-18_19.19.18.png)
 ### 5、启动：
 > 进入目录：bin/
 #### 【Windows】

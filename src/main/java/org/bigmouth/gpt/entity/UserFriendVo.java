@@ -140,7 +140,7 @@ public class UserFriendVo {
     /**
      * Coze 智能体访问令牌
      */
-    private String cozeAccessKey;
+    private String cozeAccessToken;
 
     /**
      * 变量
@@ -175,7 +175,7 @@ public class UserFriendVo {
                 .setAliyunDashscopeAppId(friend.getAliyunDashscopeAppId())
                 .setAliyunDashscopeApiKey(friend.getAliyunDashscopeApiKey())
                 .setCozeBotId(friend.getCozeBotId())
-                .setCozeAccessKey(friend.getCozeAccessKey())
+                .setCozeAccessToken(friend.getCozeAccessToken())
                 .setVariables(o.getVariables())
                 ;
     }

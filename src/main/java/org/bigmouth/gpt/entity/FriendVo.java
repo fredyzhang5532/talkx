@@ -8,7 +8,6 @@ import org.bigmouth.gpt.utils.Constants;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 /**
  * @author huxiao
@@ -135,7 +134,7 @@ public class FriendVo {
     /**
      * Coze 智能体访问令牌
      */
-    private String cozeAccessKey;
+    private String cozeAccessToken;
 
     /**
      * 自定义变量定义，一般用于阿里云百炼等平台调用时的传参，默认是一个JSON格式的数据。
@@ -197,7 +196,7 @@ public class FriendVo {
                 .setAliyunDashscopeAppId(friend.getAliyunDashscopeAppId())
                 .setAliyunDashscopeApiKey(friend.getAliyunDashscopeApiKey());
 
-        vo.setCozeAccessKey(friend.getCozeAccessKey())
+        vo.setCozeAccessToken(friend.getCozeAccessToken())
                 .setCozeBotId(friend.getCozeBotId());
 
         vo.setVariables(friend.getVariables());

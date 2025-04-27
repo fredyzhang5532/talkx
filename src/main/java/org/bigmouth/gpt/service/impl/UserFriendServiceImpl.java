@@ -191,7 +191,7 @@ public class UserFriendServiceImpl extends ServiceImpl<UserFriendMapper, UserFri
                 .setAliyunDashscopeAppId(request.getAliyunDashscopeAppId())
                 .setAliyunDashscopeApiKey(request.getAliyunDashscopeApiKey())
                 .setCozeBotId(request.getCozeBotId())
-                .setCozeAccessKey(request.getCozeAccessKey())
+                .setCozeAccessToken(request.getCozeAccessKey())
                 .setVariables(request.getVariables())
                 ;
         friendService.save(friend);
@@ -239,26 +239,29 @@ public class UserFriendServiceImpl extends ServiceImpl<UserFriendMapper, UserFri
             friend.setAliyunDashscopeAppId(request.getAliyunDashscopeAppId());
             friend.setAliyunDashscopeApiKey(request.getAliyunDashscopeApiKey());
             friend.setCozeBotId(request.getCozeBotId());
-            friend.setCozeAccessKey(request.getCozeAccessKey());
+            friend.setCozeAccessToken(request.getCozeAccessKey());
             friend.setConversactionStart(Optional.ofNullable(request.getConversationStart()).map(strings -> StringUtils.join(strings, ",")).orElse(null));
             friend.setModifyTime(LocalDateTime.now());
             friendService.updateById(friend);
             friendService.deleteCacheById(friendId);
             friendService.deleteCacheByRoleType(roleType);
 
-            // 如果是百炼应用，那么修改所有用户的提示词
-            if (friend.isAliyunDashscopeFriend()) {
-                this.updateSystemPrompt(friendId, request.getSystemPrompt());
-                List<Long> userIds = baseMapper.getUserIdByFriendId(friendId);
-                if (CollectionUtils.isNotEmpty(userIds)) {
-                    for (Long uId : userIds) {
-                        this.deleteFriendCache(uId, productType, roleType);
+            // 如果是Agent应用，那么修改所有用户的提示词
+            if (friend.isAgentFriend()) {
+                String systemPrompt = request.getSystemPrompt();
+                if (StringUtils.isNotBlank(systemPrompt)) {
+                    this.updateSystemPrompt(friendId, systemPrompt);
+                    List<Long> userIds = baseMapper.getUserIdByFriendId(friendId);
+                    if (CollectionUtils.isNotEmpty(userIds)) {
+                        for (Long uId : userIds) {
+                            this.deleteFriendCache(uId, productType, roleType);
+                        }
                     }
-                }
-                PromptConfig promptConfig = promptConfigService.getOne(roleType);
-                if (Objects.nonNull(promptConfig)) {
-                    promptConfig.setSystemPrompt(request.getSystemPrompt());
-                    promptConfigService.saveOrUpdate(promptConfig);
+                    PromptConfig promptConfig = promptConfigService.getOne(roleType);
+                    if (Objects.nonNull(promptConfig)) {
+                        promptConfig.setSystemPrompt(systemPrompt);
+                        promptConfigService.saveOrUpdate(promptConfig);
+                    }
                 }
             }
         }

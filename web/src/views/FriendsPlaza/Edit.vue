@@ -79,6 +79,8 @@ const getData = async () => {
     aliyunDashscopeWorkspaceId,
     aliyunDashscopeAppId,
     aliyunDashscopeApiKey,
+    cozeBotId,
+    cozeAccessToken,
     variables,
     messageContextSize = defaultFormData.messageContextSize,
     openaiRequestBody = JSON.parse(
@@ -101,6 +103,8 @@ const getData = async () => {
     aliyunDashscopeWorkspaceId,
     aliyunDashscopeAppId,
     aliyunDashscopeApiKey,
+    cozeBotId,
+    cozeAccessToken,
     variables,
     messageContextSize: Number(messageContextSize),
     openaiRequestBody,

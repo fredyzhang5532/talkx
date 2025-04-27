@@ -519,6 +519,8 @@ alter table `friend` add column variables text default null comment '自定义�
 alter table `user_friend` add column variables text default null comment '自定义变量定义，一般用于阿里云百炼等平台调用时的传参，默认是一个JSON格式的数据。' after `openai_request_body`;
 
 -- v0.1.1
+alter table `ai_model` modify column `platform_type` smallint(2) NOT NULL DEFAULT '1' COMMENT '平台类型。1 OpenAI、2 阿里云百炼、3 扣子';
+alter table `friend` modify column `friend_type` smallint(6) NOT NULL DEFAULT '1' COMMENT 'AI 类型。1 普通、2 GPTs、3 阿里云百炼应用、4 扣子中国应用、5 扣子全球应用';
 alter table `friend` add column coze_bot_id varchar(64) default null comment 'Coze 智能体ID' after `aliyun_dashscope_api_key`;
-alter table `friend` add column coze_access_token varchar(128) default null comment 'Coze 智能体访问令牌' after `coze_cn_bot_id`;
+alter table `friend` add column coze_access_token varchar(128) default null comment 'Coze 智能体访问令牌' after `coze_bot_id`;
 

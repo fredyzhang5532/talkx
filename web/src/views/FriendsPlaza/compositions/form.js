@@ -27,6 +27,8 @@ export const defaultFormData = {
     aliyunDashscopeWorkspaceId: "",
     aliyunDashscopeAppId: "",
     aliyunDashscopeApiKey: "",
+    cozeBotId: "",
+    cozeAccessToken: "",
     variables: "",
     openaiRequestBody: {
         maxTokens: 1000,
@@ -117,6 +119,11 @@ export const rules = {
     aliyunDashscopeAppId: {
         required: () => formData.value.friendType === 3,
         message: ' ',
+        trigger: 'blur'
+    },
+    cozeBotId: {
+        required: () => formData.value.friendType === 4 || formData.value.friendType === 5,
+        message:'',
         trigger: 'blur'
     }
 }

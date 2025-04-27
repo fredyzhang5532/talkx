@@ -83,7 +83,7 @@ public class AliyunDashscopeAppChatServiceImpl implements ChatService {
 
         try {
             String variables = prompt.getVariables();
-            JsonObject jsonObject = CozeCnChatServiceImpl.convert2JsonObject(variables);
+            JsonObject jsonObject = CozeChatServiceImpl.convert2JsonObject(variables);
 
             ApplicationParam param = ApplicationParam.builder()
                     .apiKey(Optional.ofNullable(friend.getAliyunDashscopeApiKey()).filter(StringUtils::isNotBlank).orElse(applicationConfig.getAliyunDashscopeApiKey()))
@@ -113,7 +113,10 @@ public class AliyunDashscopeAppChatServiceImpl implements ChatService {
                     msgBuilder.append(text);
                     ByteWriter<byte[]> writeConsumer = argument.getWriteConsumer();
                     if (null != writeConsumer) {
-                        writeConsumer.write(StringHelper.convert(text));
+                        byte[] bytes = StringHelper.convert(text);
+                        if (null != bytes) {
+                            writeConsumer.write(bytes);
+                        }
                     }
                     SimpleHandler flushRunnable = argument.getFlushRunnable();
                     if (null != flushRunnable) {

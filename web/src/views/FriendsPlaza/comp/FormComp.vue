@@ -57,7 +57,9 @@
         <div class="desc">建立新话题页面所展示的招呼</div>
       </div>
     </n-form-item>
-    <n-form-item label="指令" path="systemPrompt" v-if="formData.friendType === 1 || (formData.friendType === 3 && formData.friendSource === SourceType.created)">
+    <n-form-item label="指令" path="systemPrompt" 
+    v-if="formData.friendType === 1 
+          || (formData.friendType === 3 && formData.friendSource === SourceType.created)">
       <div class="item_contet">
         <n-input
           class="_input"
@@ -279,6 +281,37 @@
           <div class="desc">填写阿里云百炼应用调用的密钥，如果不填则使用系统全局配置的。</div>
         </div>
       </n-form-item>
+    </div>
+
+    <div class="diver" v-if="formData.friendType === 4 || formData.friendType === 5">扣子设置</div>
+    <div v-if="formData.friendType === 4 || formData.friendType === 5">
+      <n-form-item label="BotID" path="cozeBotId" v-if="formData.friendSource === SourceType.created">
+        <div class="item_contet">
+          <n-input
+            class="_input"
+            v-model:value="formData.cozeBotId"
+            maxlength="128"
+            show-count
+            placeholder=""
+          />
+          <div class="desc">填写扣子工作空间的智能体ID</div>
+        </div>
+      </n-form-item>
+      <n-form-item label="访问令牌" path="cozeAccessToken" v-if="formData.friendSource === SourceType.created">
+        <div class="item_contet">
+          <n-input
+            class="_input"
+            v-model:value="formData.cozeAccessToken"
+            maxlength="128"
+            show-count
+            placeholder=""
+          />
+          <div class="desc">填写扣子授权页面的访问令牌，如果不填则使用系统全局配置的。</div>
+        </div>
+      </n-form-item>
+    </div>
+
+    <div v-if="formData.friendType === 3 || formData.friendType === 4 || formData.friendType === 5">
       <n-form-item label="自定义变量" path="variables">
         <div class="item_contet">
           <div class="rowInput" v-for="(variable, i) in variableList" :key="variable">
@@ -357,9 +390,11 @@ const openUrl = window.__talkx__.openUrl;
 
 // 类型选项
 const friendTypeOptions = [
-  { label: "基础对话", value: 1 },
+  { label: "简单对话", value: 1 },
   { label: "GPTs (已过时)", value: 2, disabled: true },
-  { label: "阿里云百炼应用", value: 3 }
+  { label: "阿里云百炼应用", value: 3 },
+  { label: "Coze.cn", value: 4 },
+  { label: "Coze.com", value: 5 },
 ];
 
 const stars = ref([{ text: "" }]);
