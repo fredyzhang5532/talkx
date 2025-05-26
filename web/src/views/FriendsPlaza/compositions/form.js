@@ -125,7 +125,12 @@ export const rules = {
         required: () => formData.value.friendType === 4 || formData.value.friendType === 5,
         message:'',
         trigger: 'blur'
-    }
+    },
+    cozeAccessToken: {
+        required: () => formData.value.friendType === 4 || formData.value.friendType === 5,
+        message:'',
+        trigger: 'blur'
+    },
 }
 
 export const formDataClear = () => {
