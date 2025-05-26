@@ -14,6 +14,7 @@ import com.coze.openapi.client.connversations.message.model.MessageObjectString;
 import com.coze.openapi.client.connversations.message.model.MessageRole;
 import com.coze.openapi.service.auth.TokenAuth;
 import com.coze.openapi.service.service.CozeAPI;
+import com.coze.openapi.service.utils.Utils;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.gson.JsonObject;
@@ -32,6 +33,7 @@ import org.bigmouth.gpt.utils.Constants;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.context.annotation.Configuration;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -111,6 +113,8 @@ public class CozeChatServiceImpl implements ChatService {
                     .build();
 
             AtomicBoolean firstPacket = new AtomicBoolean(true);
+            AtomicBoolean firstReasoning = new AtomicBoolean(false);
+            AtomicBoolean firstContent = new AtomicBoolean(false);
 
             ChatEvent chatEvent = coze.chat().stream(chatReq)
                     .doOnRequest(t -> state.initFirstByteTimeInNanoTime())
@@ -121,22 +125,24 @@ public class CozeChatServiceImpl implements ChatService {
                                 eventPark.post(new ChatRequestEvent(this, chatRequest, null, user));
                             }
                             ChatEventType event = chatEvent.getEvent();
+
                             if (ChatEventType.CONVERSATION_MESSAGE_DELTA.equals(event)) {
                                 com.coze.openapi.client.connversations.message.model.Message message = chatEvent.getMessage();
+                                String reasoningContent = message.getReasoningContent();
+                                if (StringUtils.isNotBlank(reasoningContent)) {
+                                    if (firstReasoning.compareAndSet(false, true)) {
+                                        String thinkStart = "<think>\n";
+                                        writeAndFlushContent(msgBuilder, thinkStart, argument);
+                                    }
+                                    writeAndFlushContent(msgBuilder, reasoningContent, argument);
+                                }
                                 String content = message.getContent();
                                 if (StringUtils.isNotEmpty(content)) {
-                                    msgBuilder.append(content);
-                                    ByteWriter<byte[]> writeConsumer = argument.getWriteConsumer();
-                                    if (null != writeConsumer) {
-                                        byte[] bytes = StringHelper.convert(content);
-                                        if (null != bytes) {
-                                            writeConsumer.write(bytes);
-                                        }
+                                    if (firstContent.compareAndSet(false, true) && firstReasoning.get()) {
+                                        String thinkFinish = "\n</think>\n";
+                                        writeAndFlushContent(msgBuilder, thinkFinish, argument);
                                     }
-                                    SimpleHandler flushRunnable = argument.getFlushRunnable();
-                                    if (null != flushRunnable) {
-                                        flushRunnable.execute();
-                                    }
+                                    writeAndFlushContent(msgBuilder, content, argument);
                                 }
                             } else if (ChatEventType.CONVERSATION_CHAT_COMPLETED.equals(event)) {
                                 Chat chat = chatEvent.getChat();
@@ -144,6 +150,11 @@ public class CozeChatServiceImpl implements ChatService {
                                 usage.setPromptTokens(chatUsage.getInputTokens());
                                 usage.setCompletionTokens(chatUsage.getOutputTokens());
                                 usage.setTotalTokens(chatUsage.getTokenCount());
+                            } else if (ChatEventType.CONVERSATION_CHAT_FAILED.equals(event)) {
+                                Chat chat = chatEvent.getChat();
+                                log.error("call coze error: {}", chat);
+                            } else {
+                                log.info("other event: {}", event.getValue());
                             }
                         }
                     })
@@ -179,6 +190,21 @@ public class CozeChatServiceImpl implements ChatService {
         }
     }
 
+    private void writeAndFlushContent(StringBuilder msgBuilder, String think, ChatServiceArgument argument) throws IOException {
+        msgBuilder.append(think);
+        ByteWriter<byte[]> writeConsumer = argument.getWriteConsumer();
+        if (null != writeConsumer) {
+            byte[] bytes = StringHelper.convert(think);
+            if (null != bytes) {
+                writeConsumer.write(bytes);
+            }
+        }
+        SimpleHandler flushRunnable = argument.getFlushRunnable();
+        if (null != flushRunnable) {
+            flushRunnable.execute();
+        }
+    }
+
     @NotNull
     private List<com.coze.openapi.client.connversations.message.model.Message> convert2Message(List<Message> messages) {
         return messages.stream().map(message -> {
@@ -200,7 +226,7 @@ public class CozeChatServiceImpl implements ChatService {
                 }
 
                 e.setContentType(MessageContentType.OBJECT_STRING);
-                e.setContent(JSONObject.toJSONString(contents));
+                e.setContent(Utils.toJson(contents));
             } else {
                 // 纯文本
                 e.setContentType(MessageContentType.TEXT);
