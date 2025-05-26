@@ -6,7 +6,6 @@ import com.alibaba.dashscope.common.MessageContentBase;
 import com.alibaba.dashscope.common.MessageContentImageURL;
 import com.alibaba.dashscope.common.MessageContentText;
 import com.bxm.warcar.integration.eventbus.EventPark;
-import com.bxm.warcar.utils.StringHelper;
 import com.google.common.collect.Lists;
 import com.google.gson.JsonObject;
 import io.reactivex.Flowable;
@@ -27,6 +26,7 @@ import org.bigmouth.gpt.utils.Constants;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.context.annotation.Configuration;
 
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -113,10 +113,8 @@ public class AliyunDashscopeAppChatServiceImpl implements ChatService {
                     msgBuilder.append(text);
                     ByteWriter<byte[]> writeConsumer = argument.getWriteConsumer();
                     if (null != writeConsumer) {
-                        byte[] bytes = StringHelper.convert(text);
-                        if (null != bytes) {
-                            writeConsumer.write(bytes);
-                        }
+                        byte[] bytes = text.getBytes(StandardCharsets.UTF_8);
+                        writeConsumer.write(bytes);
                     }
                     SimpleHandler flushRunnable = argument.getFlushRunnable();
                     if (null != flushRunnable) {

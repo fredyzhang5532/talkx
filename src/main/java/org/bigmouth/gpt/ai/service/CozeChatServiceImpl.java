@@ -1,9 +1,7 @@
 package org.bigmouth.gpt.ai.service;
 
 import com.alibaba.dashscope.utils.JsonUtils;
-import com.alibaba.fastjson.JSONObject;
 import com.bxm.warcar.integration.eventbus.EventPark;
-import com.bxm.warcar.utils.StringHelper;
 import com.coze.openapi.client.chat.CreateChatReq;
 import com.coze.openapi.client.chat.model.Chat;
 import com.coze.openapi.client.chat.model.ChatEvent;
@@ -34,6 +32,7 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.context.annotation.Configuration;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -190,14 +189,12 @@ public class CozeChatServiceImpl implements ChatService {
         }
     }
 
-    private void writeAndFlushContent(StringBuilder msgBuilder, String think, ChatServiceArgument argument) throws IOException {
-        msgBuilder.append(think);
+    private void writeAndFlushContent(StringBuilder msgBuilder, String content, ChatServiceArgument argument) throws IOException {
+        msgBuilder.append(content);
         ByteWriter<byte[]> writeConsumer = argument.getWriteConsumer();
         if (null != writeConsumer) {
-            byte[] bytes = StringHelper.convert(think);
-            if (null != bytes) {
-                writeConsumer.write(bytes);
-            }
+            byte[] bytes = content.getBytes(StandardCharsets.UTF_8);
+            writeConsumer.write(bytes);
         }
         SimpleHandler flushRunnable = argument.getFlushRunnable();
         if (null != flushRunnable) {
