@@ -15,6 +15,8 @@ public interface Constants {
 
     Duration DEFAULT_TIMEOUT = Duration.ofMinutes(20);
 
+    Duration DEFAULT_SESSION_EXPIRE_TIME = Duration.ofDays(30);
+
     String HEADER_SESSIONID = "talkx-sessionid";
     String HEADER_MSGID = "talkx-msgid";
 
