@@ -311,9 +311,7 @@ public class OpenAiProtocolChatServiceImpl implements ChatService, Ordered, Open
     public static String toJSONString(OpenApiRequest request) {
         Model model = Model.ofName(request.getModel());
         if (Objects.isNull(model)) {
-            log.warn("Unsupported model: {}, Just use gpt-all json format.", request.getModel());
-            // maybe is GPT-4-GIZMO-* or GPTs
-            return toGptAllJson(request);
+            return toGpt4VisionPreviewJson(request, model);
         }
         switch (model) {
             case GPT_4_ALL:
