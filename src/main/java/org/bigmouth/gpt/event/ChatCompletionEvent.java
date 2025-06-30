@@ -3,10 +3,7 @@ package org.bigmouth.gpt.event;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import org.bigmouth.gpt.ai.entity.ApiKey;
-import org.bigmouth.gpt.ai.entity.ChatServiceArgument;
-import org.bigmouth.gpt.ai.entity.Message;
-import org.bigmouth.gpt.ai.entity.Usage;
+import org.bigmouth.gpt.ai.entity.*;
 import org.bigmouth.gpt.entity.AiModel;
 import org.bigmouth.gpt.entity.Prompt;
 import org.bigmouth.gpt.entity.User;
@@ -73,6 +70,18 @@ public class ChatCompletionEvent extends EventObject {
 
         public AiModel getAiModel() {
             return argument.getAiModel();
+        }
+
+        public Message getLastUserMessage() {
+            Message userMessage = null;
+            for (int i = messages.size() - 1; i >= 0; i--) {
+                Message msg = messages.get(i);
+                if (GptRole.USER.getName().equals(msg.getRole())) {
+                    userMessage = msg;
+                    break;
+                }
+            }
+            return userMessage;
         }
     }
 }
