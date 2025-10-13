@@ -3,6 +3,7 @@ package org.bigmouth.gpt.ai.entity;
 import com.alibaba.fastjson.annotation.JSONField;
 import lombok.Data;
 import lombok.experimental.Accessors;
+import lombok.extern.slf4j.Slf4j;
 import org.bigmouth.gpt.utils.TikTokensUtils;
 
 import java.util.List;
@@ -14,6 +15,7 @@ import java.util.Optional;
  * @date 2023-04-20
  * @since 1.0
  */
+@Slf4j
 @Data
 @Accessors(chain = true)
 public class OpenApiRequest {
@@ -134,7 +136,12 @@ public class OpenApiRequest {
      */
     @JSONField(serialize = false, deserialize = false)
     public int getTokens() {
-        return TikTokensUtils.tokens(getModel(), getMessages());
+        try {
+            return TikTokensUtils.tokens(getModel(), getMessages());
+        } catch (UnsupportedOperationException e) {
+            log.warn("不支持模型 {} 的 token 计算", getModel(), e);
+            return 0;
+        }
     }
 
     @JSONField(serialize = false, deserialize = false)
