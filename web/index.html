@@ -2,14 +2,23 @@
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8" />
-  <link rel="icon" type="image/svg+xml" href="/logo.svg" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0,user-scalable=no" /> 
-  <title>TalkX</title> 
-</head> 
+    <meta charset="UTF-8"/>
+    <link rel="icon" type="image/svg+xml" href="/logo.svg"/>
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#212224">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0,user-scalable=no"/>
+    <title>TalkX</title>
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/service-worker.js')
+                .then(() => console.log('✅ Service Worker 已注册'))
+                .catch(err => console.error('❌ 注册失败:', err));
+        }
+    </script>
+</head>
 <body>
-  <div id="app"></div>
-  <script type="module" src="/src/main.js"></script>
+<div id="app"></div>
+<script type="module" src="/src/main.js"></script>
 </body>
 <!-- <script src="https://cdn.bootcss.com/vConsole/3.2.2/vconsole.min.js"></script>
 <script>
