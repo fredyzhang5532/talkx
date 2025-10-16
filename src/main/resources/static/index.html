@@ -1,14 +1,23 @@
 <!DOCTYPE html><html lang="en"><head>
-  <meta charset="UTF-8">
-  <link rel="icon" type="image/svg+xml" href="./logo.svg">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0,user-scalable=no"> 
-  <title>TalkX</title> 
-  <script type="module" crossorigin="" src="./assets/bundle.0.0.2.js?v=0.6624411655913371"></script>
-  <link rel="stylesheet" href="./assets/index.0.0.2.css?v=0.6624411655913371">
-</head> 
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/svg+xml" href="./logo.svg">
+    <link rel="manifest" href="./manifest.json">
+    <meta name="theme-color" content="#212224">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0,user-scalable=no">
+    <title>TalkX</title>
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/service-worker.js')
+                .then(() => console.log('✅ Service Worker 已注册'))
+                .catch(err => console.error('❌ 注册失败:', err));
+        }
+    </script>
+  <script type="module" crossorigin="" src="./assets/bundle.0.0.2.js?v=0.9994225010119648"></script>
+  <link rel="stylesheet" href="./assets/index.0.0.2.css?v=0.9994225010119648">
+</head>
 <body>
-  <div id="app"></div>
-  
+<div id="app"></div>
+
 
 
 
